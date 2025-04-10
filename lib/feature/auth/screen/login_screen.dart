@@ -1,13 +1,23 @@
+import 'dart:convert';
+
 import 'package:car_connect/core/resource/font_manager.dart';
 import 'package:car_connect/core/resource/size_manager.dart';
 import 'package:car_connect/core/widget/button/main_app_button.dart';
 import 'package:car_connect/core/widget/form_field/app_form_field.dart';
+import 'package:car_connect/core/widget/loading/app_circular_progress_widget.dart';
+import 'package:car_connect/core/widget/snack_bar/note_message.dart';
 import 'package:car_connect/core/widget/text/app_text_widget.dart';
+import 'package:car_connect/feature/auth/model/generate_otp_request_entitiy.dart';
+import 'package:car_connect/feature/auth/model/generate_otp_response_entity.dart';
+import 'package:car_connect/feature/auth/screen/verification_code_screen.dart';
 import 'package:car_connect/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
+import '../../../core/api/api_links.dart';
+import '../../../core/api/api_methods.dart';
 import '../../../core/resource/color_manager.dart';
+import '../../../core/storage/shared/shared_pref.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,6 +28,69 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   int selectedType = 0;
+  int status = -1;
+
+  TextEditingController phoneController = TextEditingController();
+
+  void onLoginClicked() async {
+    setState(() {
+      status = 0;
+    });
+    if (phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColorManager.white,
+          content: AppTextWidget(
+            text: "enter your number",
+            color: AppColorManager.navy,
+            fontSize: FontSizeManager.fs16,
+            fontWeight: FontWeight.w600,
+            overflow: TextOverflow.visible,
+          ),
+        ),
+      );
+      return;
+    }
+    GenerateOtpRequestEntitiy entity = GenerateOtpRequestEntitiy();
+    entity.phone = phoneController.text;
+    entity.type = selectedType.toString();
+    http.Response response =
+        await HttpMethods().postMethod(ApiPostUrl.generateOtp, entity.toJson());
+    GenerateOtpResponseEntity authResponseEntity;
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      setState(() {
+        status = 1;
+      });
+
+      if ((response.body ?? "").isNotEmpty) {
+        authResponseEntity = generateOtpResponseEntityFromJson(response.body);
+        NoteMessage.showSuccessSnackBar(
+            context: context,
+            text: authResponseEntity.code.toString(),
+            duration: 8);
+        Navigator.of(context).pushNamed(RouteNamedScreens.verification,
+            arguments: VerificationArgs(
+                type: selectedType.toString(), phone: phoneController.text));
+      }
+    } else {
+      setState(() {
+        status = 2;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColorManager.white,
+          content: AppTextWidget(
+            text: utf8.decode(response.bodyBytes),
+            color: AppColorManager.navy,
+            fontSize: FontSizeManager.fs16,
+            fontWeight: FontWeight.w600,
+            overflow: TextOverflow.visible,
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +125,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               AppTextFormField(
                 hintText: "number",
+                controller: phoneController,
                 onChanged: (p0) {},
                 validator: (p0) {},
+                textInputType: TextInputType.number,
               ),
               SizedBox(
                 height: AppHeightManager.h9,
@@ -84,7 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: FontSizeManager.fs15,
                             color: selectedType == 1
                                 ? AppColorManager.navy
-                                : AppColorManager.white,                                ),
+                                : AppColorManager.white,
+                          ),
                         ],
                       ),
                     ),
@@ -100,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: AppHeightManager.h7point5,
                       onTap: () {
                         setState(() {
-                          selectedType=1;
+                          selectedType = 1;
                         });
                       },
                       color: selectedType == 1
@@ -116,7 +192,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: FontSizeManager.fs15,
                             color: selectedType == 0
                                 ? AppColorManager.navy
-                                : AppColorManager.white,                          ),
+                                : AppColorManager.white,
+                          ),
                         ],
                       ),
                     ),
@@ -128,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               MainAppButton(
                 onTap: () {
-                  Navigator.of(context).pushNamed(RouteNamedScreens.verification);
+                  onLoginClicked();
                 },
                 alignment: Alignment.center,
                 width: AppWidthManager.w100,

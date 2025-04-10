@@ -90,7 +90,7 @@ abstract class NoteMessage {
     int? maxLines,
   }) {
     return context.showFlash(
-        duration: const Duration(seconds:2),
+        duration:  Duration(seconds: duration?? 2),
         builder: (context, controller) => FlashBar(
               shadowColor: AppColorManager.white,
               surfaceTintColor: AppColorManager.white,

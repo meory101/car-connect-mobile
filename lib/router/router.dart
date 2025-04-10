@@ -34,8 +34,11 @@ abstract class AppRouter {
           page: const LoginScreen(),
         );
       case RouteNamedScreens.verification:
+        argument as VerificationArgs;
         return FadeBuilderRoute(
-          page: const VerificationCodeScreen(),
+          page:  VerificationCodeScreen(
+            args: argument,
+          ),
         );
       case RouteNamedScreens.home:
         return FadeBuilderRoute(

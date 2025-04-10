@@ -1,10 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:car_connect/core/helper/image_helper.dart';
 import 'package:car_connect/core/widget/button/main_app_dotted_button.dart';
 import 'package:car_connect/core/widget/form_field/title_app_form_filed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:http/http.dart' as http;
+import '../../../core/api/api_links.dart';
+import '../../../core/api/api_methods.dart';
+import '../../../core/helper/location_helper.dart';
 import '../../../core/resource/color_manager.dart';
 import '../../../core/resource/font_manager.dart';
 import '../../../core/resource/size_manager.dart';
@@ -21,115 +28,215 @@ class PersonalInfo extends StatefulWidget {
 }
 
 class _PersonalInfoState extends State<PersonalInfo> {
+  File? imageId;
+  File? commercialRegister;
+  GlobalKey<FormState> formKey = GlobalKey();
+  String? name;
+  String? desc;
+
+  void onSave() async {
+    if (!formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColorManager.white,
+          content: AppTextWidget(
+            text: "enter all fields",
+            color: AppColorManager.navy,
+            fontSize: FontSizeManager.fs16,
+            fontWeight: FontWeight.w600,
+            overflow: TextOverflow.visible,
+          ),
+        ),
+      );
+      return;
+    }
+
+    Map requestEntity = {};
+    requestEntity['name'] = name;
+    requestEntity['desc'] = desc;
+    http.Response response = await HttpMethods().postMethod(
+        ApiPostUrl.addBusinessUserProfileInfo, jsonEncode(requestEntity));
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      Navigator.of(context).pushNamed(RouteNamedScreens.home);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColorManager.white,
+          content: AppTextWidget(
+            text: "something went wrong",
+            color: AppColorManager.navy,
+            fontSize: FontSizeManager.fs16,
+            fontWeight: FontWeight.w600,
+            overflow: TextOverflow.visible,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(AppWidthManager.w3Point8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(height: AppHeightManager.h20),
-              AppTextWidget(
-                text: "Additional Info",
-                color: AppColorManager.white,
-                fontWeight: FontWeight.w600,
-                fontSize: FontSizeManager.fs24,
-              ),
-              SizedBox(
-                height: AppHeightManager.h1point8,
-              ),
-              AppTextWidget(
-                text: "please add required into to continue to your account",
-                color: AppColorManager.white,
-                fontWeight: FontWeight.w600,
-                fontSize: FontSizeManager.fs16,
-                maxLines: 2,
-              ),
-              SizedBox(
-                height: AppHeightManager.h4,
-              ),
-              Visibility(
-                  visible: true,
-                  child: Column(
-                    children: [
-                      TitleAppFormFiled(
-                        title: "name",
-                        hint: "name",
-                        onChanged: (p0) {},
-                        validator: (p0) {},
-                      ),
-                      TitleAppFormFiled(
-                        title: "desc",
-                        hint: "desc",
-                        onChanged: (p0) {},
-                        validator: (p0) {},
-                      ),
-                      TitleAppFormFiled(
-                        title: "location",
-                        hint: "location",
-                        onChanged: (p0) {},
-                        validator: (p0) {},
-                      ),
-                      SizedBox(
-                        height: AppHeightManager.h1point8,
-                      ),
-                      MainAppDottedButton(
-                        onTap: () {
-                          ImageHelper.pickImageFrom(source: ImageSource.gallery);
-                        },
-                        color: AppColorManager.navy.withAlpha(50),
-                        child: AppTextWidget(
-                          text: "Commercial Register",
-                          color: AppColorManager.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: FontSizeManager.fs15,
-                          maxLines: 2,
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(height: AppHeightManager.h20),
+                AppTextWidget(
+                  text: "Additional Info",
+                  color: AppColorManager.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: FontSizeManager.fs24,
+                ),
+                SizedBox(
+                  height: AppHeightManager.h1point8,
+                ),
+                AppTextWidget(
+                  text: "please add required into to continue to your account",
+                  color: AppColorManager.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: FontSizeManager.fs16,
+                  maxLines: 2,
+                ),
+                SizedBox(
+                  height: AppHeightManager.h4,
+                ),
+                Visibility(
+                    visible: true,
+                    child: Column(
+                      children: [
+                        TitleAppFormFiled(
+                          title: "name",
+                          hint: "name",
+                          onChanged: (p0) {
+                            setState(() {
+                              name =p0;
+                            });
+                          },
+                          validator: (p0) {
+                            if ((p0 ?? "").isEmpty) {
+                              return "required";
+                            }
+                            return null;
+                          },
                         ),
-                      ),
-                      SizedBox(
-                        height: AppHeightManager.h1point8,
-                      ),
-                    ],
-                  )),
-              MainAppDottedButton(
-                color: AppColorManager.navy.withAlpha(50),
-                child: AppTextWidget(
+                        TitleAppFormFiled(
+                          title: "desc",
+                          hint: "desc",
+                          onChanged: (p0) {
+                            setState(() {
+                              desc =p0;
+                            });
+                          },
+                          validator: (p0) {
+                            if ((p0 ?? "").isEmpty) {
+                              return "required";
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: AppHeightManager.h1point8,),
+                        SizedBox(
+                          width: AppWidthManager.w100,
+                          child: AppTextFormField(
+                            readOnly: true,
+                            // controller: locationController,
+                            // fillColor: AppColorManager.lightGreyOpacity6,
+                            maxLines: 1,
+                            hintText: "location",
+                            onChanged: (value) {},
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "required";
+                              }
+                              return null;
+                            },
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                Icons.my_location,
+                                color: AppColorManager.navy,
+                              ),
+                              onPressed: () async {
+                                Position? position =
+                                await LocationHelper.getCurrentLocation(
+                                    context);
+                                if (position != null) {
+                                  // locationController.text =
+                                  // 'Lat: ${position.latitude}, Long: ${position.longitude}';
+                                  // latitude = position.latitude.toString();
+                                  // longitude = position.longitude.toString();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: AppHeightManager.h1point8,
+                        ),
+                        MainAppDottedButton(
+                          onTap: () async {
+                            commercialRegister =
+                                await ImageHelper.pickImageFrom(
+                                    source: ImageSource.gallery);
+                          },
+                          color: AppColorManager.navy.withAlpha(50),
+                          child: AppTextWidget(
+                            text: "Commercial Register",
+                            color: AppColorManager.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: FontSizeManager.fs15,
+                            maxLines: 2,
+                          ),
+                        ),
+                        SizedBox(
+                          height: AppHeightManager.h1point8,
+                        ),
+                      ],
+                    )),
+                MainAppDottedButton(
+                  color: AppColorManager.navy.withAlpha(50),
+                  child: AppTextWidget(
+                    onTap: () async {
+                      imageId = await ImageHelper.pickImageFrom(
+                          source: ImageSource.gallery);
+                    },
+                    text: "Id Image",
+                    color: AppColorManager.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: FontSizeManager.fs15,
+                    maxLines: 2,
+                  ),
+                ),
+                SizedBox(
+                  height: AppHeightManager.h4,
+                ),
+                MainAppButton(
                   onTap: () {
-                    ImageHelper.pickImageFrom(source: ImageSource.gallery);
+                    Navigator.of(context).pushNamed(RouteNamedScreens.home);
                   },
-                  text: "Id Image",
-                  color: AppColorManager.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: FontSizeManager.fs15,
-                  maxLines: 2,
-                ),
-              ),
-              SizedBox(
-                height: AppHeightManager.h4,
-              ),
-              MainAppButton(
-                onTap: () {
-                  Navigator.of(context).pushNamed(RouteNamedScreens.home);
-                },
-                alignment: Alignment.center,
-                width: AppWidthManager.w100,
-                color: AppColorManager.navy,
-                height: AppHeightManager.h6,
-                child: AppTextWidget(
-                  text: "Save",
-                  color: AppColorManager.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: FontSizeManager.fs15,
-                  maxLines: 2,
-                ),
-              )
-            ],
+                  alignment: Alignment.center,
+                  width: AppWidthManager.w100,
+                  color: AppColorManager.navy,
+                  height: AppHeightManager.h6,
+                  child: AppTextWidget(
+                    text: "Save",
+                    color: AppColorManager.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: FontSizeManager.fs15,
+                    maxLines: 2,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+

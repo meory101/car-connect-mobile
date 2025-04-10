@@ -23,7 +23,7 @@ class _VerificationCodeWidgetState extends State<VerificationCodeWidget> {
         autofocus: true,
         keyboardType: TextInputType.number,
         onCompleted: widget.onCodeEntered,
-        length: 4,
+        length: 6,
 
         androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
 
