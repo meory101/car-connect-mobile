@@ -93,7 +93,6 @@ class _PersonalInfoState extends State<PersonalInfo> {
       }
 
     }
-    print('oddddddddddddddddddddddddd${UserAuthType.id}');
 
     http.Response response = await HttpMethods().postWithMultiFile(
         UserAuthType.type == "1"

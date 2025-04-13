@@ -1,8 +1,11 @@
 import 'package:car_connect/core/resource/image_manager.dart';
+import 'package:car_connect/feature/home/screen/car_details_screen.dart';
+import 'package:car_connect/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/widget/image/main_image_widget.dart';
+import '../../../core/api/api_links.dart';
 import '../../../core/resource/color_manager.dart';
 import '../../../core/resource/font_manager.dart';
 import '../../../core/resource/size_manager.dart';
@@ -11,7 +14,8 @@ import '../../../core/widget/text/app_text_widget.dart';
 
 class CarCard extends StatefulWidget {
   var car;
-   CarCard({
+
+  CarCard({
     super.key,
     required this.car
   });
@@ -25,9 +29,14 @@ class _CarCardState extends State<CarCard> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.car==null ?SizedBox(): InkWell(
+    return widget.car == null ? SizedBox() : InkWell(
       overlayColor: WidgetStatePropertyAll(AppColorManager.transparent),
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).pushNamed(RouteNamedScreens.carDetails,
+
+            arguments: CarDetailsArgs(id: widget.car['car']['id'].toString())
+        );
+      },
       child: DecoratedContainer(
 
         padding: EdgeInsets.only(
@@ -61,7 +70,8 @@ class _CarCardState extends State<CarCard> {
                 fit: BoxFit.cover,
                 imageUrl:
 
-                widget.car['images'].isEmpty?"d": widget.car['images'][0]['imageUrl'],
+                widget.car['images'].isEmpty ? "d" : imageUrl +
+                    widget.car['images'][0]['imageUrl'],
                 // imagePath: AppPixelManager,
               ),
             ),
@@ -74,21 +84,10 @@ class _CarCardState extends State<CarCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppTextWidget(
-                    text:widget.car['car']['available'] ==1 ? "Available": "Not Available",
-                    fontSize: FontSizeManager.fs16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  SizedBox(
-                    height: AppHeightManager.h1,
-                  ),
-                  AppTextWidget(
                     text: "${widget.car['car']['desc']}",
-                    fontSize: FontSizeManager.fs15,
+                    fontSize: FontSizeManager.fs16,
                     fontWeight: FontWeight.w400,
-                    color: AppColorManager.textGrey,
+                    color: AppColorManager.black,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),

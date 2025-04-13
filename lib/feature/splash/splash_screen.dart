@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
         if(AppSharedPreferences.getUserId().isNotEmpty){
-          Navigator.of(context).pushReplacementNamed(RouteNamedScreens.home);
+          Navigator.of(context).pushReplacementNamed(RouteNamedScreens.main);
 
           return;
 

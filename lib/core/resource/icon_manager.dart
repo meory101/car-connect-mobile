@@ -24,5 +24,6 @@ abstract class AppIconManager {
   static String warning = '$_iconBasePath/warning.svg';
   static String calendar = '$_iconBasePath/calendar.svg';
   static String doc = '$_iconBasePath/doc.svg';
-  static String doneCircle = '$_iconBasePath/done_circle.svg';
+  static String board = '$_iconBasePath/board.svg';
+  static String car = '$_iconBasePath/car.svg';
 }

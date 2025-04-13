@@ -53,9 +53,6 @@ import '../storage/shared/shared_pref.dart';
       }:{},
 
     );
-    print(AppSharedPreferences.getToken());
-    print(response.body);
-    print(response.statusCode);
     return response;
   }
 

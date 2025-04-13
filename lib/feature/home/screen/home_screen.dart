@@ -57,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       if ((response.body ?? "").isNotEmpty) {
-        print(response.body);
         print(jsonDecode(response.body));
         if (jsonDecode(response.body)['cars'].isEmpty) {
           cars = [];
@@ -169,7 +168,7 @@ print('dddddddddddddddddddddddddddd');
         child: RefreshIndicator(
           onRefresh: () async {
             Navigator.of(context).pushNamedAndRemoveUntil(
-              RouteNamedScreens.home,
+              RouteNamedScreens.main,
               (route) => false,
             );
           },
@@ -349,7 +348,7 @@ print('dddddddddddddddddddddddddddd');
                     visible: newCarsStatus == 1,
                     replacement: const SizedBox(),
                     child: SizedBox(
-                      height: AppHeightManager.h40,
+                      height: AppHeightManager.h39,
                       child: newCars.isEmpty
                           ? Text("")
                           : ListView.builder(
