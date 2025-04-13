@@ -60,6 +60,7 @@ import '../storage/shared/shared_pref.dart';
   }
 
   postWithMultiFile(String url, Map data, List<File> files,List<String>names) async {
+    print(data);
     var multipartrequest = await http.MultipartRequest('POST', Uri.parse(url));
     for (int i = 0; i < files.length; i++) {
       var length = await files[i].length();
@@ -73,8 +74,8 @@ import '../storage/shared/shared_pref.dart';
     });
     http.StreamedResponse sresponce = await multipartrequest.send();
     http.Response response = await http.Response.fromStream(sresponce);
-
-    return jsonDecode(response.body);
+    // print(object)
+    return response;
   }
 
 

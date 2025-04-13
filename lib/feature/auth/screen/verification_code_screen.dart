@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:car_connect/core/storage/shared/shared_pref.dart';
 import 'package:car_connect/feature/auth/model/verification_request_entity.dart';
+import 'package:car_connect/feature/auth/screen/personal_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,7 +13,7 @@ import '../../../../../core/resource/icon_manager.dart';
 import '../../../../../core/resource/size_manager.dart';
 import '../../../../../core/widget/text/app_text_widget.dart';
 import 'dart:ui' as ui;
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 import '../../../core/api/api_links.dart';
 import '../../../core/api/api_methods.dart';
 import '../../../router/router.dart';
@@ -20,7 +21,8 @@ import '../widget/verification_digit_widget.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   final VerificationArgs args;
-  const VerificationCodeScreen({super.key,required this.args});
+
+  const VerificationCodeScreen({super.key, required this.args});
 
   @override
   State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
@@ -30,7 +32,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   int status = -1;
 
   void onCodeEntered(String code) async {
-
     setState(() {
       status = 0;
     });
@@ -47,6 +48,15 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       });
 
       if ((response.body ?? "").isNotEmpty) {
+        print( jsonDecode(response.body));
+        UserAuthType.type = widget.args.type;
+       var data= jsonDecode(response.body);
+        if(data['user'] !=null){
+          UserAuthType.id =data['user']['id'].toString();
+        }else if( data['businessUser'] !=null){
+          UserAuthType.id =data['businessUser']['id'].toString();
+
+        }
         Navigator.of(context).pushNamed(RouteNamedScreens.personalInfo);
       }
     } else {
@@ -154,8 +164,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   }
 }
 
-class VerificationArgs{
+class VerificationArgs {
   String type;
   String phone;
-  VerificationArgs({required this.type,required this.phone});
+
+  VerificationArgs({required this.type, required this.phone});
 }

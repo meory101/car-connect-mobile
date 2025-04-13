@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:car_connect/core/helper/image_helper.dart';
+import 'package:car_connect/core/storage/shared/shared_pref.dart';
 import 'package:car_connect/core/widget/button/main_app_dotted_button.dart';
 import 'package:car_connect/core/widget/form_field/title_app_form_filed.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,11 +33,16 @@ class _PersonalInfoState extends State<PersonalInfo> {
   File? commercialRegister;
   GlobalKey<FormState> formKey = GlobalKey();
   String? name;
+  String? lat;
+  String? long;
   String? desc;
+  TextEditingController locationController = TextEditingController();
 
   void onSave() async {
-    if (!formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    List<File> files = [];
+    List<String> names = [];
+    if (UserAuthType.type == "0") {
+      if (imageId == null) {
         SnackBar(
           backgroundColor: AppColorManager.white,
           content: AppTextWidget(
@@ -46,17 +52,61 @@ class _PersonalInfoState extends State<PersonalInfo> {
             fontWeight: FontWeight.w600,
             overflow: TextOverflow.visible,
           ),
-        ),
-      );
-      return;
+        );
+        return;
+      } else {
+        files.add(imageId!);
+        names.add("idImageUrl");
+      }
+    } else {
+      if (!formKey.currentState!.validate() ||
+          imageId == null ||
+          lat == null ||
+          long == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColorManager.white,
+            content: AppTextWidget(
+              text: "enter all fields",
+              color: AppColorManager.navy,
+              fontSize: FontSizeManager.fs16,
+              fontWeight: FontWeight.w600,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+        );
+        return;
+      }
     }
+    Map requestEntity = {"id": UserAuthType.id};
 
-    Map requestEntity = {};
-    requestEntity['name'] = name;
-    requestEntity['desc'] = desc;
-    http.Response response = await HttpMethods().postMethod(
-        ApiPostUrl.addBusinessUserProfileInfo, jsonEncode(requestEntity));
+    if (UserAuthType.type == "1") {
+      requestEntity['name'] = name;
+      requestEntity['desc'] = desc;
+      requestEntity['lat'] = lat;
+      requestEntity['long'] = long;
+      files.add(imageId!);
+      names.add("idImageUrl");
+      if(commercialRegister!=null){
+        files.add(commercialRegister!);
+        names.add("commercialRegisterImageUrl");
+      }
+
+    }
+    print('oddddddddddddddddddddddddd${UserAuthType.id}');
+
+    http.Response response = await HttpMethods().postWithMultiFile(
+        UserAuthType.type == "1"
+            ? ApiPostUrl.addBusinessUserProfileInfo
+            : ApiPostUrl.uploadUserIdImage,
+        requestEntity,
+        files,
+        names);
     if (response.statusCode == 200 || response.statusCode == 201) {
+      AppSharedPreferences.cashUserId(userId: UserAuthType.id ?? "");
+      AppSharedPreferences.cashAuthType(authType: UserAuthType.type ?? "");
+      AppSharedPreferences.cashUserNameEn(userName: name ?? "");
+
       Navigator.of(context).pushNamed(RouteNamedScreens.home);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -107,7 +157,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                   height: AppHeightManager.h4,
                 ),
                 Visibility(
-                    visible: true,
+                    visible: UserAuthType.type == "1",
                     child: Column(
                       children: [
                         TitleAppFormFiled(
@@ -115,7 +165,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                           hint: "name",
                           onChanged: (p0) {
                             setState(() {
-                              name =p0;
+                              name = p0;
                             });
                           },
                           validator: (p0) {
@@ -130,7 +180,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                           hint: "desc",
                           onChanged: (p0) {
                             setState(() {
-                              desc =p0;
+                              desc = p0;
                             });
                           },
                           validator: (p0) {
@@ -140,12 +190,14 @@ class _PersonalInfoState extends State<PersonalInfo> {
                             return null;
                           },
                         ),
-                        SizedBox(height: AppHeightManager.h1point8,),
+                        SizedBox(
+                          height: AppHeightManager.h1point8,
+                        ),
                         SizedBox(
                           width: AppWidthManager.w100,
                           child: AppTextFormField(
                             readOnly: true,
-                            // controller: locationController,
+                            controller: locationController,
                             // fillColor: AppColorManager.lightGreyOpacity6,
                             maxLines: 1,
                             hintText: "location",
@@ -163,18 +215,28 @@ class _PersonalInfoState extends State<PersonalInfo> {
                               ),
                               onPressed: () async {
                                 Position? position =
-                                await LocationHelper.getCurrentLocation(
-                                    context);
+                                    await LocationHelper.getCurrentLocation(
+                                        context);
                                 if (position != null) {
-                                  // locationController.text =
-                                  // 'Lat: ${position.latitude}, Long: ${position.longitude}';
-                                  // latitude = position.latitude.toString();
-                                  // longitude = position.longitude.toString();
+                                  locationController.text =
+                                      'Lat: ${position.latitude}, Long: ${position.longitude}';
+                                  lat = position.latitude.toString();
+                                  long = position.longitude.toString();
                                 }
                               },
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: AppHeightManager.h1point8,
+                        ),
+                        AppTextWidget(
+                          maxLines: 3,
+                            color: AppColorManager.red,
+                            fontSize: FontSizeManager.fs15,
+                            text:
+                                "commercial register image is optional if you are not a company and want to add car for sell you have to provide ownership image"),
+
                         SizedBox(
                           height: AppHeightManager.h1point8,
                         ),
@@ -186,7 +248,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                           },
                           color: AppColorManager.navy.withAlpha(50),
                           child: AppTextWidget(
-                            text: "Commercial Register",
+                            text: "Commercial Register(optional)",
                             color: AppColorManager.white,
                             fontWeight: FontWeight.w600,
                             fontSize: FontSizeManager.fs15,
@@ -202,6 +264,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                   color: AppColorManager.navy.withAlpha(50),
                   child: AppTextWidget(
                     onTap: () async {
+                      print('ddddddddd');
                       imageId = await ImageHelper.pickImageFrom(
                           source: ImageSource.gallery);
                     },
@@ -217,7 +280,8 @@ class _PersonalInfoState extends State<PersonalInfo> {
                 ),
                 MainAppButton(
                   onTap: () {
-                    Navigator.of(context).pushNamed(RouteNamedScreens.home);
+                    onSave();
+                    // Navigator.of(context).pushNamed(RouteNamedScreens.home);
                   },
                   alignment: Alignment.center,
                   width: AppWidthManager.w100,
@@ -240,3 +304,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
   }
 }
 
+abstract class UserAuthType {
+  static String? type;
+  static String? id;
+}

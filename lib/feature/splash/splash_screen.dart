@@ -1,3 +1,4 @@
+import 'package:car_connect/core/storage/shared/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:car_connect/router/router.dart';
 import '../../../../core/helper/app_info_helper.dart';
@@ -28,6 +29,12 @@ class _SplashScreenState extends State<SplashScreen> {
   navigateToNextPage() {
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
+        if(AppSharedPreferences.getUserId().isNotEmpty){
+          Navigator.of(context).pushReplacementNamed(RouteNamedScreens.home);
+
+          return;
+
+        }
         Navigator.of(context).pushReplacementNamed(RouteNamedScreens.login);
       }
     });

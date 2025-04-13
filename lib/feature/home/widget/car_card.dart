@@ -10,8 +10,10 @@ import '../../../core/widget/container/decorated_container.dart';
 import '../../../core/widget/text/app_text_widget.dart';
 
 class CarCard extends StatefulWidget {
-  const CarCard({
+  var car;
+   CarCard({
     super.key,
+    required this.car
   });
 
   @override
@@ -23,7 +25,7 @@ class _CarCardState extends State<CarCard> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return widget.car==null ?SizedBox(): InkWell(
       overlayColor: WidgetStatePropertyAll(AppColorManager.transparent),
       onTap: () {},
       child: DecoratedContainer(
@@ -57,7 +59,9 @@ class _CarCardState extends State<CarCard> {
                 width: AppWidthManager.w44,
                 height: AppHeightManager.h27,
                 fit: BoxFit.cover,
-                imagePath: AppImageManager.car1,
+                imageUrl:
+
+                widget.car['images'].isEmpty?"d": widget.car['images'][0]['imageUrl'],
                 // imagePath: AppPixelManager,
               ),
             ),
@@ -70,8 +74,9 @@ class _CarCardState extends State<CarCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppTextWidget(
-                    text: "Ford 203",
+                    text:widget.car['car']['available'] ==1 ? "Available": "Not Available",
                     fontSize: FontSizeManager.fs16,
+                    color: Colors.black,
                     fontWeight: FontWeight.w700,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -80,7 +85,7 @@ class _CarCardState extends State<CarCard> {
                     height: AppHeightManager.h1,
                   ),
                   AppTextWidget(
-                    text: "descdescdescdescdescdescdescdescdescdescdescdescdescdescdescdesc",
+                    text: "${widget.car['car']['desc']}",
                     fontSize: FontSizeManager.fs15,
                     fontWeight: FontWeight.w400,
                     color: AppColorManager.textGrey,
@@ -94,7 +99,7 @@ class _CarCardState extends State<CarCard> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       AppTextWidget(
-                        text: "200\$",
+                        text: "${widget.car['car']['price']}\$",
                         fontSize: FontSizeManager.fs16,
                         fontWeight: FontWeight.w700,
                         color: AppColorManager.navy,
