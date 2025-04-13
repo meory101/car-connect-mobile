@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:car_connect/core/resource/size_manager.dart';
 import 'package:car_connect/core/storage/shared/shared_pref.dart';
 import 'package:car_connect/core/widget/loading/app_circular_progress_widget.dart';
+import 'package:car_connect/feature/car/model/car_response_entity.dart';
 import 'package:car_connect/feature/home/widget/home_banners.dart';
 import 'package:car_connect/router/router.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,8 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int status = -1;
   int newCarsStatus = -1;
   var selectedBrand;
-  var cars = [];
-  var newCars = [];
+  List<Cars> cars = [];
+  List<Cars> newCars = [];
   int selectedBrandIndex = 0;
   var brands = [];
   int carStatus = -1;
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (jsonDecode(response.body)['cars'].isEmpty) {
           cars = [];
         } else {
-          cars = jsonDecode(response.body)['cars'];
+          cars = carResponseEntityFromJson(response.body).cars ??[];
         }
       } else {
         setState(() {
@@ -101,7 +102,7 @@ print('dddddddddddddddddddddddddddd');
         if (jsonDecode(response.body)['cars'].isEmpty) {
           newCars = [];
         } else {
-          newCars = jsonDecode(response.body)['cars'];
+          newCars = carResponseEntityFromJson(response.body).cars ??[];
         }
       } else {
         setState(() {

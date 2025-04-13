@@ -4,6 +4,7 @@ String imageUrl = 'http://192.168.132.164:8000/storage/';
 class ApiGetUrl {
   static String getBrands = '${_baseUrl}getBrands';
   static String getNewestCars = '${_baseUrl}getNewestCars';
+  static String getCars = '${_baseUrl}getCars';
 
 }
 

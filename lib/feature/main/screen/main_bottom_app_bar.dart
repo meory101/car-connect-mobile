@@ -1,3 +1,4 @@
+import 'package:car_connect/feature/car/screens/cars_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
@@ -21,7 +22,7 @@ class MainAppBottomAppBar extends StatefulWidget {
 class _MainAppBottomAppBarState extends State<MainAppBottomAppBar> {
   final List<Widget> bottomBarScreens = [
     const HomeScreen(),
-    const HomeScreen(),
+    const CarsScreen(),
     const HomeScreen(),
     // const HomeScreen(),
   ];
