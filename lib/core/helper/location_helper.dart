@@ -12,7 +12,7 @@ class LocationHelper {
     if (!serviceEnabled) {
       NoteMessage.showErrorSnackBar(
           context: context,
-          text: "select location"
+          text: "open location"
       );
       return null;
     }

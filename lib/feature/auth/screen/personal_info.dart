@@ -20,7 +20,13 @@ import '../../../core/widget/button/main_app_button.dart';
 import '../../../core/widget/form_field/app_form_field.dart';
 import '../../../core/widget/text/app_text_widget.dart';
 import '../../../router/router.dart';
-
+File? imageId;
+File? commercialRegister;
+GlobalKey<FormState> formKey = GlobalKey();
+String? name;
+String? lat;
+String? long;
+String? desc;
 class PersonalInfo extends StatefulWidget {
   const PersonalInfo({super.key});
 
@@ -90,6 +96,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
       if(commercialRegister!=null){
         files.add(commercialRegister!);
         names.add("commercialRegisterImageUrl");
+
       }
 
     }
@@ -105,8 +112,10 @@ class _PersonalInfoState extends State<PersonalInfo> {
       AppSharedPreferences.cashUserId(userId: UserAuthType.id ?? "");
       AppSharedPreferences.cashAuthType(authType: UserAuthType.type ?? "");
       AppSharedPreferences.cashUserNameEn(userName: name ?? "");
+      AppSharedPreferences.cashCommercialRegister(register: commercialRegister?.path??"");
 
-      Navigator.of(context).pushNamed(RouteNamedScreens.home);
+      Navigator.of(context).pushNamed(RouteNamedScreens.main
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -260,13 +269,14 @@ class _PersonalInfoState extends State<PersonalInfo> {
                       ],
                     )),
                 MainAppDottedButton(
+                  onTap: () async {
+                    print('ddddddddd');
+                    imageId = await ImageHelper.pickImageFrom(
+                        source: ImageSource.gallery);
+                  },
                   color: AppColorManager.navy.withAlpha(50),
                   child: AppTextWidget(
-                    onTap: () async {
-                      print('ddddddddd');
-                      imageId = await ImageHelper.pickImageFrom(
-                          source: ImageSource.gallery);
-                    },
+
                     text: "Id Image",
                     color: AppColorManager.white,
                     fontWeight: FontWeight.w600,
@@ -306,4 +316,5 @@ class _PersonalInfoState extends State<PersonalInfo> {
 abstract class UserAuthType {
   static String? type;
   static String? id;
+  static bool? isCompany;
 }

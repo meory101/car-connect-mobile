@@ -55,7 +55,7 @@ class TitleAppFormFiled extends StatelessWidget {
           text: title,
           fontSize: FontSizeManager.fs16,
           fontWeight: FontWeight.w600,
-          color: titleColor ?? AppColorManager.textAppColor,
+          color: titleColor ?? AppColorManager.white,
         ),
         SizedBox(
           height: paddingValue?? AppHeightManager.h05,

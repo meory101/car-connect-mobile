@@ -29,13 +29,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             onTap: () {
               Navigator.pop(context);
             },
-            child: SvgPicture.asset(
-              LanguageHelper.checkIfLTR(context: context)
-                  ? AppIconManager.arrowLeft
-                  : AppIconManager.arrowRight,
-              colorFilter:
-                  const ColorFilter.mode(AppColorManager.navy, BlendMode.srcIn),
-            ),
+            child: Icon(Icons.arrow_back_ios,color: Colors.white,)
           ),
           SizedBox(
             width: AppWidthManager.w2,
@@ -43,7 +37,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
           AppTextWidget(
             text: title,
             fontSize: FontSizeManager.fs18,
-            color: AppColorManager.navy,
+            color: AppColorManager.white,
             fontWeight: FontWeight.w600,
             textAlign: TextAlign.center,
           ),

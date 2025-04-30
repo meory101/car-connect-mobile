@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'dart:io';
-
-import 'package:car_connect/core/resource/color_manager.dart';
 import 'package:image_picker/image_picker.dart';
 
 ///

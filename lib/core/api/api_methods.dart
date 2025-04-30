@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart';
@@ -58,6 +57,11 @@ import '../storage/shared/shared_pref.dart';
 
   postWithMultiFile(String url, Map data, List<File> files,List<String>names) async {
     print(data);
+    print(files);
+    print(names);
+    var headers=
+   { "Accept": "application/json",
+    "Authorization": "Bearer ${AppSharedPreferences.getToken()}"};
     var multipartrequest = await http.MultipartRequest('POST', Uri.parse(url));
     for (int i = 0; i < files.length; i++) {
       var length = await files[i].length();
@@ -69,9 +73,15 @@ import '../storage/shared/shared_pref.dart';
     data.forEach((key, value) {
       multipartrequest.fields[key] = value;
     });
+
+
     http.StreamedResponse sresponce = await multipartrequest.send();
     http.Response response = await http.Response.fromStream(sresponce);
     // print(object)
+
+      print(response.statusCode);
+      print(response.body);
+      // print(jsonDecode(response.body));
     return response;
   }
 

@@ -1,8 +1,12 @@
 import 'package:car_connect/feature/auth/screen/personal_info.dart';
 import 'package:car_connect/feature/auth/screen/verification_code_screen.dart';
+import 'package:car_connect/feature/board/screen/add_car_screen.dart';
+import 'package:car_connect/feature/board/screen/car_orders_screen.dart';
+import 'package:car_connect/feature/board/screen/my_cars_screen.dart';
 import 'package:car_connect/feature/home/screen/car_details_screen.dart';
 import 'package:car_connect/feature/home/screen/home_screen.dart';
 import 'package:car_connect/feature/main/screen/main_bottom_app_bar.dart';
+import 'package:car_connect/feature/profile/presentation/profile_screen.dart';
 import 'package:car_connect/feature/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -15,11 +19,15 @@ abstract class RouteNamedScreens {
   static String init = splash;
   static const String splash = "/splash";
   static const String main = "/main";
+  static const String profile = "/profile";
   static const String carDetails = "/car-details";
   static const String login = "/login";
   static const String personalInfo = "/personal-info";
   static const String home = "/home";
   static const String verification = "/verification";
+  static const String addCar = "/add-car";
+  static const String myCars = "/myCars";
+  static const String carOrders = "/car-orders";
 }
 
 abstract class AppRouter {
@@ -45,6 +53,16 @@ abstract class AppRouter {
           ),
         );
 
+      case RouteNamedScreens.addCar:
+        return FadeBuilderRoute(
+          page:  AddCarScreen(
+          ),
+        );
+      case RouteNamedScreens.myCars:
+        return FadeBuilderRoute(
+          page:  MyCarsScreen(
+          ),
+        );
       case RouteNamedScreens.carDetails:
         argument as CarDetailsArgs;
         return FadeBuilderRoute(
@@ -55,6 +73,16 @@ abstract class AppRouter {
       case RouteNamedScreens.main:
         return FadeBuilderRoute(
           page:  const MainAppBottomAppBar(
+          ),
+        );
+      case RouteNamedScreens.profile:
+        return FadeBuilderRoute(
+          page:  const ProfileScreen(
+          ),
+        );
+      case RouteNamedScreens.carOrders:
+        return FadeBuilderRoute(
+          page:  const CarOrdersScreen(
           ),
         );
       case RouteNamedScreens.home:

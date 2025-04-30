@@ -1,3 +1,6 @@
+import 'package:car_connect/core/storage/shared/shared_pref.dart';
+import 'package:car_connect/feature/board/screen/company_borad.dart';
+import 'package:car_connect/feature/board/screen/user_board.dart';
 import 'package:car_connect/feature/car/screens/cars_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +13,10 @@ import 'package:car_connect/core/widget/text/app_text_widget.dart';
 
 import '../../home/screen/home_screen.dart';
 
-
 class MainAppBottomAppBar extends StatefulWidget {
-
-  const MainAppBottomAppBar({super.key,});
+  const MainAppBottomAppBar({
+    super.key,
+  });
 
   @override
   State<MainAppBottomAppBar> createState() => _MainAppBottomAppBarState();
@@ -23,10 +26,11 @@ class _MainAppBottomAppBarState extends State<MainAppBottomAppBar> {
   final List<Widget> bottomBarScreens = [
     const HomeScreen(),
     const CarsScreen(),
-    const HomeScreen(),
+    AppSharedPreferences.getAuthType() == "0"
+        ? const UserBoard()
+        : const CompanyBorad(),
     // const HomeScreen(),
   ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +53,9 @@ class _MainAppBottomAppBarState extends State<MainAppBottomAppBar> {
               AppWidthManager.w3Point8,
             ),
             decoration: BoxDecoration(
-              // color: AppColorManager.,
-              border: Border(top: BorderSide(color: AppColorManager.white)),
-              borderRadius: BorderRadius.circular(AppRadiusManager.r20)
-            ),
+                // color: AppColorManager.,
+                border: Border(top: BorderSide(color: AppColorManager.white)),
+                borderRadius: BorderRadius.circular(AppRadiusManager.r20)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -62,7 +65,6 @@ class _MainAppBottomAppBarState extends State<MainAppBottomAppBar> {
                   onTap: () {
                     setState(() {
                       BottomAppBarIndex.index = 0;
-
                     });
                   },
                   child: Column(
@@ -74,7 +76,7 @@ class _MainAppBottomAppBarState extends State<MainAppBottomAppBar> {
                                   : AppColorManager.grey,
                               BlendMode.srcIn)),
                       AppTextWidget(
-                        text:"Home",
+                        text: "Home",
                         color: BottomAppBarIndex.index == 0
                             ? AppColorManager.navy
                             : AppColorManager.grey,
@@ -88,7 +90,6 @@ class _MainAppBottomAppBarState extends State<MainAppBottomAppBar> {
                   onTap: () {
                     setState(() {
                       BottomAppBarIndex.index = 1;
-
                     });
                   },
                   child: Column(
@@ -114,7 +115,6 @@ class _MainAppBottomAppBarState extends State<MainAppBottomAppBar> {
                   onTap: () {
                     setState(() {
                       BottomAppBarIndex.index = 2;
-
                     });
                   },
                   child: Column(
@@ -175,7 +175,8 @@ class _MainAppBottomAppBarState extends State<MainAppBottomAppBar> {
   }
 }
 
-abstract class  BottomAppBarIndex {
-  static int index=0;
+abstract class BottomAppBarIndex {
+  static int index = 0;
+
   BottomAppBarIndex({required int index});
 }

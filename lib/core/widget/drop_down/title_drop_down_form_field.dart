@@ -35,7 +35,7 @@ class TitleDropDownFormFieldWidget extends StatelessWidget {
           maxLines: 3,
           overflow: TextOverflow.visible,
           fontWeight: FontWeight.w600,
-          color: AppColorManager.textAppColor,
+          color: AppColorManager.white,
         ),
         SizedBox(
           height: AppHeightManager.h1,

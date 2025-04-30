@@ -14,11 +14,8 @@ void main() async {
     AppInfoHelper.packageInfo = value;
   });
 
-
-
   SharedPreferences shPref = await SharedPreferences.getInstance();
   AppSharedPreferences.init(shPref);
-
   runApp(
     const CarConnect(),
   );

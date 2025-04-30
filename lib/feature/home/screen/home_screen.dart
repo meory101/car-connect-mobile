@@ -1,13 +1,16 @@
 import 'dart:convert';
+import 'package:car_connect/core/resource/icon_manager.dart';
 import 'package:car_connect/core/resource/size_manager.dart';
 import 'package:car_connect/core/storage/shared/shared_pref.dart';
 import 'package:car_connect/core/widget/loading/app_circular_progress_widget.dart';
 import 'package:car_connect/feature/car/model/car_response_entity.dart';
+import 'package:car_connect/feature/home/model/pay_account.dart';
 import 'package:car_connect/feature/home/widget/home_banners.dart';
 import 'package:car_connect/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/api/api_links.dart';
 import '../../../core/api/api_methods.dart';
 import '../../../core/resource/color_manager.dart';
@@ -39,6 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     getBrands();
+    if (AppSharedPreferences.getAuthType() == "0") {
+      getUserAccount();
+    }
     getNewCars();
     super.initState();
   }
@@ -62,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (jsonDecode(response.body)['cars'].isEmpty) {
           cars = [];
         } else {
-          cars = carResponseEntityFromJson(response.body).cars ??[];
+          cars = carResponseEntityFromJson(response.body).cars ?? [];
         }
       } else {
         setState(() {
@@ -97,12 +103,12 @@ class _HomeScreenState extends State<HomeScreen> {
         newCarsStatus = 1;
       });
       print(jsonDecode(response.body));
-print('dddddddddddddddddddddddddddd');
+      print('dddddddddddddddddddddddddddd');
       if ((response.body ?? "").isNotEmpty) {
         if (jsonDecode(response.body)['cars'].isEmpty) {
           newCars = [];
         } else {
-          newCars = carResponseEntityFromJson(response.body).cars ??[];
+          newCars = carResponseEntityFromJson(response.body).cars ?? [];
         }
       } else {
         setState(() {
@@ -146,6 +152,33 @@ print('dddddddddddddddddddddddddddd');
           status = 2;
         });
 
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColorManager.white,
+            content: AppTextWidget(
+              text: utf8.decode(response.bodyBytes),
+              color: AppColorManager.navy,
+              fontSize: FontSizeManager.fs16,
+              fontWeight: FontWeight.w600,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  PayAccount? payAccount;
+
+  void getUserAccount() async {
+    print( AppSharedPreferences.getUserId());
+    http.Response response = await HttpMethods().postMethod(
+        ApiPostUrl.getUserPayCard, {"userId": AppSharedPreferences.getUserId()} );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if ((response.body ?? "").isNotEmpty) {
+        print(response.body);
+        payAccount = payAccountFromJson(response.body);
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: AppColorManager.white,
@@ -206,13 +239,91 @@ print('dddddddddddddddddddddddddddd');
                           ),
                         ],
                       ),
-                      MainImageWidget(
-                        imagePath: AppImageManager.main,
-                        height: AppHeightManager.h8,
-                        width: AppHeightManager.h8,
-                        fit: BoxFit.cover,
+                      InkWell(
+                        onTap: () {
+                          if (AppSharedPreferences.getAuthType() == "0") return;
+                          Navigator.of(context)
+                              .pushNamed(RouteNamedScreens.profile);
+                        },
+                        child: MainImageWidget(
+                          imagePath: AppImageManager.main,
+                          height: AppHeightManager.h8,
+                          width: AppHeightManager.h8,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ],
+                  ),
+                  Visibility(
+                    visible: AppSharedPreferences.getAuthType() == "0",
+                    child: SizedBox(
+                      height: AppHeightManager.h4,
+                    ),
+                  ),
+                  Visibility(
+                    visible: AppSharedPreferences.getAuthType() == "0",
+                    child: Container(
+                      padding: EdgeInsets.all(AppWidthManager.w3Point8),
+                      height: AppHeightManager.h13,
+                      width: AppWidthManager.w100,
+                      decoration: BoxDecoration(
+                        color: AppColorManager.navy.withAlpha(80),
+                        borderRadius:
+                            BorderRadius.circular(AppRadiusManager.r12),
+                        border: Border.all(color: AppColorManager.navy),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  AppTextWidget(
+                                    text: "Car Connect Pay Card",
+                                    fontSize: FontSizeManager.fs17,
+                                    color: AppColorManager.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ],
+                              ),
+
+                              AppTextWidget(
+                                text: "${payAccount?.accountNumber??""}",
+                                fontSize: FontSizeManager.fs17,
+                                color: AppColorManager.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              Row(
+                                children: [
+                                  AppTextWidget(
+                                    text: "${payAccount?.balance??"0.0"} \$",
+                                    fontSize: FontSizeManager.fs16,
+                                    color: AppColorManager.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                AppSharedPreferences.clear();
+
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                  RouteNamedScreens.login,
+                                  (route) => false,
+                                );
+                              },
+                              icon: Icon(
+                                Icons.exit_to_app,
+                                color: Colors.white,
+                              ))
+                        ],
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: AppHeightManager.h4,
