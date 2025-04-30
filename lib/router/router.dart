@@ -2,6 +2,7 @@ import 'package:car_connect/feature/auth/screen/personal_info.dart';
 import 'package:car_connect/feature/auth/screen/verification_code_screen.dart';
 import 'package:car_connect/feature/board/screen/add_car_screen.dart';
 import 'package:car_connect/feature/board/screen/car_orders_screen.dart';
+import 'package:car_connect/feature/board/screen/cutomer_orders.dart';
 import 'package:car_connect/feature/board/screen/my_cars_screen.dart';
 import 'package:car_connect/feature/home/screen/car_details_screen.dart';
 import 'package:car_connect/feature/home/screen/home_screen.dart';
@@ -62,7 +63,7 @@ abstract class AppRouter {
 
       case RouteNamedScreens.myOrders:
         return FadeBuilderRoute(
-          page:  Scaffold(
+          page:  CustomerOrdersScreen(
           ),
         );
       case RouteNamedScreens.myCars:

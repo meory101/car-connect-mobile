@@ -15,12 +15,14 @@ class ApiGetUrl {
 class ApiPostUrl {
   static String getCarsByBrandId = '${_baseUrl}getCarsByBrandId';
   static String addCar = '${_baseUrl}addCar';
+  static String getOrderByUserId = '${_baseUrl}getOrderByUserId';
   static String changeOrderStatus = '${_baseUrl}changeOrderStatus';
   static String addOrder = '${_baseUrl}addOrder';
   static String getOrderByCompanyId = '${_baseUrl}getOrderByCompanyId';
   static String getUserPayCard = '${_baseUrl}getUserPayCard';
   static String generateOtp = '${_baseUrl}generateOTP';
   static String verifyCode = '${_baseUrl}verifyCode';
+  static String getCarsByUserId = '${_baseUrl}getCarsByUserId';
   static String getCarDetails = '${_baseUrl}getCarDetails';
   static String getBusinessUser = '${_baseUrl}getBusinessUser';
   static String uploadUserIdImage = '${_baseUrl}uploadUserIdImage';

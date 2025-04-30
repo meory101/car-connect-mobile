@@ -41,10 +41,7 @@ CarResponseEntity? cars;
 
       if ((response.body ?? "").isNotEmpty) {
         print(jsonDecode(response.body));
-        print('dddddddddddddddddddddddddd');
         cars = carResponseEntityFromJson(response.body);
-        print(cars?.cars?.length);
-        print('dddddddddddddddddd');
       } else {
         setState(() {
           status = 2;

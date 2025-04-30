@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/injection/injection_container.dart' as di;
 import 'core/storage/shared/shared_pref.dart';
 
-//
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();

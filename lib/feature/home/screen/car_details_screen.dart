@@ -77,7 +77,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     setState(() {
       status = 0;
     });
-    print(widget.args.id);
     http.Response response = await HttpMethods()
         .postMethod(ApiPostUrl.getCarDetails, {"id": widget.args.id});
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -374,11 +373,10 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                       border: Border.all(color: AppColorManager.white)),
                   child: MainAppButton(
                     onTap: () {
-                      print(DateTime.now());
                       makeOrder(
                           paymentType: selectedType.toString(),
                           carId: (entity?.car?.id).toString(),
-                          date: DateTime.now().toString(),
+                          date: "",
                           lat: "",
                           long: "");
                     },
