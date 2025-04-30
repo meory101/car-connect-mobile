@@ -9,6 +9,7 @@ import 'package:car_connect/core/widget/image/main_image_widget.dart';
 import 'package:car_connect/core/widget/loading/app_circular_progress_widget.dart';
 import 'package:car_connect/feature/home/model/car_details_response_entity.dart';
 import 'package:car_connect/feature/home/widget/expansion_card.dart';
+import 'package:car_connect/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +31,8 @@ class CarDetailsScreen extends StatefulWidget {
 class _CarDetailsScreenState extends State<CarDetailsScreen> {
   int status = -1;
   CarDetailsResponseEntity? entity;
-int selectedType  =0;
+  int selectedType = 0;
+
   makeOrder({
     required String paymentType,
     required String carId,
@@ -49,6 +51,10 @@ int selectedType  =0;
     });
     if (response.statusCode == 200 || response.statusCode == 201) {
       if ((response.body ?? "").isNotEmpty) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          RouteNamedScreens.main,
+          (route) => false,
+        );
         setState(() {});
       }
     } else {
@@ -289,9 +295,10 @@ int selectedType  =0;
                   children: [
                     Expanded(
                       child: MainAppButton(
-                        padding:
-                        EdgeInsets.symmetric(horizontal: AppWidthManager.w10),
-                        borderRadius: BorderRadius.circular(AppRadiusManager.r10),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: AppWidthManager.w10),
+                        borderRadius:
+                            BorderRadius.circular(AppRadiusManager.r10),
                         height: AppHeightManager.h7point5,
                         onTap: () {
                           setState(() {
@@ -322,9 +329,10 @@ int selectedType  =0;
                     ),
                     Expanded(
                       child: MainAppButton(
-                        padding:
-                        EdgeInsets.symmetric(horizontal: AppWidthManager.w10),
-                        borderRadius: BorderRadius.circular(AppRadiusManager.r10),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: AppWidthManager.w10),
+                        borderRadius:
+                            BorderRadius.circular(AppRadiusManager.r10),
                         height: AppHeightManager.h7point5,
                         onTap: () {
                           setState(() {
@@ -352,7 +360,6 @@ int selectedType  =0;
                     ),
                   ],
                 ),
-
                 SizedBox(
                   height: AppHeightManager.h3,
                 ),
@@ -367,7 +374,6 @@ int selectedType  =0;
                       border: Border.all(color: AppColorManager.white)),
                   child: MainAppButton(
                     onTap: () {
-
                       print(DateTime.now());
                       makeOrder(
                           paymentType: selectedType.toString(),
