@@ -432,8 +432,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           builder: (context, index) {
-                            return CarCard(
-                              car: cars[index],
+                            return Visibility(
+                              visible: cars[index].car?.available ==1,
+                              child: CarCard(
+                                car: cars[index],
+                              ),
                             );
                           },
                           itemCount: cars.length,
@@ -467,11 +470,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemCount: newCars.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: AppWidthManager.w1),
-                                  child: CarCard(
-                                    car: newCars[index],
+                                return Visibility(
+                                  visible: cars[index].car?.available ==1,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: AppWidthManager.w1),
+                                    child: CarCard(
+                                      car: newCars[index],
+                                    ),
                                   ),
                                 );
                               },

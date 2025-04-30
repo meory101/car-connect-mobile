@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:car_connect/core/api/api_links.dart';
+import 'package:car_connect/core/widget/button/main_app_button.dart';
 import 'package:car_connect/core/widget/container/decorated_container.dart';
 import 'package:car_connect/core/widget/image/main_image_widget.dart';
 import 'package:car_connect/feature/board/model/order_response_entity.dart';
@@ -60,17 +61,10 @@ class _CarOrdersScreenState extends State<CarOrdersScreen> {
   Future<CarDetailsResponseEntity?> getCar(id) async {
     http.Response response = await HttpMethods()
         .postMethod(ApiPostUrl.getCarDetails, {"id": "${id}"});
-    print(response.statusCode);
-    print('2222222222222222222222222222222222');
-
-    print(response.body);
-    print('2222222222222222222222222222222222');
     if (response.statusCode == 200 || response.statusCode == 201) {
       if ((response.body ?? "").isNotEmpty) {
         CarDetailsResponseEntity car =
             carDetailsResponseEntityFromJson(response.body);
-        print(car.car?.desc);
-        print('dddddddddddddddddddddddddddddddd');
         return car;
       } else {}
     }
@@ -79,14 +73,35 @@ class _CarOrdersScreenState extends State<CarOrdersScreen> {
   List<CarDetailsResponseEntity?> cars = [];
 
   Future<void> loadCars() async {
-    print(entity?.orders?.length);
-    print('lllllllllllllllllllllllllllllllllllllllll');
     for (var order in entity?.orders ?? []) {
       cars.add(await getCar(order.car?.id ?? ""));
     }
     setState(() {});
-    print(cars.length);
-    print('e,e,,,,,,,,,,,,,,,,,,,,,,,,,,,');
+  }
+
+  changeOrderStatus(status, orderId) async {
+    http.Response response = await HttpMethods().postMethod(
+        ApiPostUrl.changeOrderStatus,
+        {"orderId": "$orderId", "status": status});
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if ((response.body ?? "").isNotEmpty) {
+        getOrders();
+        setState(() {});
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColorManager.white,
+          content: AppTextWidget(
+            text: utf8.decode(response.bodyBytes),
+            color: AppColorManager.navy,
+            fontSize: FontSizeManager.fs16,
+            fontWeight: FontWeight.w600,
+            overflow: TextOverflow.visible,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -165,32 +180,33 @@ class _CarOrdersScreenState extends State<CarOrdersScreen> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        flex: 1,
+                                          flex: 1,
                                           child: Container(
                                             height: AppHeightManager.h6,
                                             width: AppHeightManager.h6,
-
-                                        child: MainImageWidget(
-                                          height: AppHeightManager.h6,
-                                          fit: BoxFit.cover,
-                                          width: AppHeightManager.h6,
-                                          imageUrl: (cars[index]?.images ?? [])
-                                                  .isEmpty
-                                              ? "cc"
-                                              : cars[index]
-                                                      ?.images
-                                                      ?.first
-                                                      .imageUrl ??
-                                                  "cc",
-                                        ),
-                                      )),
-                                      SizedBox(width: AppWidthManager.w1Point8,),
+                                            child: MainImageWidget(
+                                              height: AppHeightManager.h6,
+                                              fit: BoxFit.cover,
+                                              width: AppHeightManager.h6,
+                                              imageUrl:
+                                                  (cars[index]?.images ?? [])
+                                                          .isEmpty
+                                                      ? "cc"
+                                                      : cars[index]
+                                                              ?.images
+                                                              ?.first
+                                                              .imageUrl ??
+                                                          "cc",
+                                            ),
+                                          )),
+                                      SizedBox(
+                                        width: AppWidthManager.w1Point8,
+                                      ),
                                       Expanded(
-                                        flex: 2,
+                                          flex: 2,
                                           child: AppTextWidget(
-                                              text:
-                                                  "${cars[index]?.car?.desc}",
-                                          maxLines: 2,
+                                            text: "${cars[index]?.car?.desc}",
+                                            maxLines: 2,
                                             color: AppColorManager.black,
                                             fontSize: FontSizeManager.fs16,
                                             fontWeight: FontWeight.w400,
@@ -277,6 +293,57 @@ class _CarOrdersScreenState extends State<CarOrdersScreen> {
                                         ],
                                       )
                                     ],
+                                  ),
+                                  SizedBox(
+                                    height: AppHeightManager.h3,
+                                  ),
+                                  Visibility(
+                                    visible: (status) == "0",
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: MainAppButton(
+                                              onTap: () {
+                                                changeOrderStatus(
+                                                    '-1',
+                                                    entity?.orders?[index].order
+                                                        ?.id);
+                                              },
+                                              alignment: Alignment.center,
+                                              height: AppHeightManager.h6,
+                                              color: AppColorManager.red,
+                                              child: AppTextWidget(
+                                                text: "Reject",
+                                                maxLines: 2,
+                                                color: AppColorManager.white,
+                                                fontSize: FontSizeManager.fs16,
+                                                fontWeight: FontWeight.w400,
+                                              )),
+                                        ),
+                                        SizedBox(
+                                          width: AppWidthManager.w1Point2,
+                                        ),
+                                        Expanded(
+                                          child: MainAppButton(
+                                              onTap: () {
+                                                changeOrderStatus(
+                                                    '1',
+                                                    entity?.orders?[index].order
+                                                        ?.id);
+                                              },
+                                              alignment: Alignment.center,
+                                              height: AppHeightManager.h6,
+                                              color: AppColorManager.green,
+                                              child: AppTextWidget(
+                                                text: "Accept",
+                                                maxLines: 2,
+                                                color: AppColorManager.white,
+                                                fontSize: FontSizeManager.fs16,
+                                                fontWeight: FontWeight.w400,
+                                              )),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(
                                     height: AppHeightManager.h1point8,

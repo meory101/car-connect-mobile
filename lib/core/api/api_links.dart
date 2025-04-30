@@ -15,6 +15,8 @@ class ApiGetUrl {
 class ApiPostUrl {
   static String getCarsByBrandId = '${_baseUrl}getCarsByBrandId';
   static String addCar = '${_baseUrl}addCar';
+  static String changeOrderStatus = '${_baseUrl}changeOrderStatus';
+  static String addOrder = '${_baseUrl}addOrder';
   static String getOrderByCompanyId = '${_baseUrl}getOrderByCompanyId';
   static String getUserPayCard = '${_baseUrl}getUserPayCard';
   static String generateOtp = '${_baseUrl}generateOTP';
