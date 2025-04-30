@@ -20,6 +20,7 @@ abstract class RouteNamedScreens {
   static const String splash = "/splash";
   static const String main = "/main";
   static const String profile = "/profile";
+  static const String myOrders = "/myOrders";
   static const String carDetails = "/car-details";
   static const String login = "/login";
   static const String personalInfo = "/personal-info";
@@ -56,6 +57,12 @@ abstract class AppRouter {
       case RouteNamedScreens.addCar:
         return FadeBuilderRoute(
           page:  AddCarScreen(
+          ),
+        );
+
+      case RouteNamedScreens.myOrders:
+        return FadeBuilderRoute(
+          page:  Scaffold(
           ),
         );
       case RouteNamedScreens.myCars:
