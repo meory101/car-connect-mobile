@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'comments.dart';
 /// car : {"id":4,"desc":"sssssssssssssssssssssss","price":"222","available":1,"killo":"33","ownerShipImageUrl":"Af17HtkdfJgznhieFK0oXYarpFFRLTQSlgWFOrYR.jpg","colorId":1,"gearId":1,"brandId":1,"modelId":1,"userId":4,"created_at":"2025-04-13T11:29:53.000000Z","updated_at":"2025-04-13T11:29:53.000000Z"}
 /// gear : {"id":1,"name":"rrrrrr","created_at":null,"updated_at":null}
 /// model : {"id":1,"name":"model","created_at":"2025-04-10T12:44:00.000000Z","updated_at":"2025-04-10T12:44:00.000000Z"}
@@ -14,18 +16,33 @@ class CarDetailsResponseEntity {
       Gear? gear, 
       Model? model, 
       Color? color, 
-      Brand? brand, 
+      Brand? brand,
+      String? rate,
+      String? views,
+      String? likes,
+
+    List<Comments>? comments,
       List<Images>? images,}){
     _car = car;
+    _likes = likes;
+    _comments =comments;
     _gear = gear;
     _model = model;
     _color = color;
+    _rate = rate;
+    _views = views;
     _brand = brand;
     _images = images;
 }
 
   CarDetailsResponseEntity.fromJson(dynamic json) {
+    _comments = json['comments'] == null
+        ? []
+        : List<Comments>.from(json['comments'].map((x) => Comments.fromJson(x)));
     _car = json['car'] != null ? Car.fromJson(json['car']) : null;
+    _rate = json['rate']?.toString();
+    _views = json['views'].toString();
+    _likes = json['likes'].toString();
     _gear = json['gear'] != null ? Gear.fromJson(json['gear']) : null;
     _model = json['model'] != null ? Model.fromJson(json['model']) : null;
     _color = json['color'] != null ? Color.fromJson(json['color']) : null;
@@ -41,26 +58,42 @@ class CarDetailsResponseEntity {
   Gear? _gear;
   Model? _model;
   Color? _color;
+  String? _rate;
+  String? _views;
+  String? _likes;
   Brand? _brand;
+  List<Comments>? _comments;
   List<Images>? _images;
 CarDetailsResponseEntity copyWith({  Car? car,
   Gear? gear,
   Model? model,
+  List<Comments>? comments,
   Color? color,
   Brand? brand,
   List<Images>? images,
+  String? rate,
+  String? likes,
+  String? views
 }) => CarDetailsResponseEntity(  car: car ?? _car,
   gear: gear ?? _gear,
+  comments: comments ?? _comments,
   model: model ?? _model,
   color: color ?? _color,
   brand: brand ?? _brand,
   images: images ?? _images,
+  likes: likes ?? _likes,
+  views: views?? _views,
+  rate:rate?? _rate
 );
   Car? get car => _car;
+  String? get rate => _rate;
+  String? get views => _views;
+  String? get likes => _likes;
   Gear? get gear => _gear;
   Model? get model => _model;
   Color? get color => _color;
   Brand? get brand => _brand;
+  List<Comments>? get comments => _comments;
   List<Images>? get images => _images;
 
   Map<String, dynamic> toJson() {

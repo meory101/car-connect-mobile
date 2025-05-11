@@ -1,5 +1,5 @@
-String _baseUrl = 'http://192.168.132.164:8000/api/';
-String imageUrl = 'http://192.168.132.164:8000/storage/';
+String _baseUrl = 'http://192.168.76.164:8000/api/';
+String imageUrl = 'http://192.168.76.164:8000/storage/';
 
 class ApiGetUrl {
   static String getBrands = '${_baseUrl}getBrands';
@@ -14,6 +14,9 @@ class ApiGetUrl {
 
 class ApiPostUrl {
   static String getCarsByBrandId = '${_baseUrl}getCarsByBrandId';
+  static String rateCar = '${_baseUrl}rateCar';
+  static String addLike = '${_baseUrl}addLike';
+  static String addComment = '${_baseUrl}addComment';
   static String addCar = '${_baseUrl}addCar';
   static String getOrderByUserId = '${_baseUrl}getOrderByUserId';
   static String changeOrderStatus = '${_baseUrl}changeOrderStatus';
