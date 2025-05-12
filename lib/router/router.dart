@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../core/navigation/fade_builder_route.dart';
 import '../feature/auth/screen/login_screen.dart';
+import '../feature/board/screen/favorites_screen.dart';
 
 
 
@@ -30,6 +31,7 @@ abstract class RouteNamedScreens {
   static const String addCar = "/add-car";
   static const String myCars = "/myCars";
   static const String carOrders = "/car-orders";
+  static const String myFavorites = "/my-favorites";
 }
 
 abstract class AppRouter {
@@ -42,6 +44,11 @@ abstract class AppRouter {
       case RouteNamedScreens.splash:
         return FadeBuilderRoute(
           page: const SplashScreen(),
+        );
+
+      case RouteNamedScreens.myFavorites:
+        return FadeBuilderRoute(
+          page: FavoritesScreen(),
         );
       case RouteNamedScreens.login:
         return FadeBuilderRoute(

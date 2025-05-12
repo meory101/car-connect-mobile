@@ -17,6 +17,7 @@ class ApiPostUrl {
   static String rateCar = '${_baseUrl}rateCar';
   static String addLike = '${_baseUrl}addLike';
   static String addComment = '${_baseUrl}addComment';
+  static String getUserFavorites = '${_baseUrl}getUserFavorites';
   static String addCar = '${_baseUrl}addCar';
   static String getOrderByUserId = '${_baseUrl}getOrderByUserId';
   static String changeOrderStatus = '${_baseUrl}changeOrderStatus';
@@ -29,6 +30,7 @@ class ApiPostUrl {
   static String getCarDetails = '${_baseUrl}getCarDetails';
   static String getBusinessUser = '${_baseUrl}getBusinessUser';
   static String uploadUserIdImage = '${_baseUrl}uploadUserIdImage';
+  static String addFavorite = '${_baseUrl}addFavorite';
   static String addBusinessUserProfileInfo =
       '${_baseUrl}addBusinessUserProfileInfo';
 }

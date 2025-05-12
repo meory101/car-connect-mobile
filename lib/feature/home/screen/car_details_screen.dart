@@ -136,6 +136,46 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     }
   }
 
+
+  void addToFavorite(carId) async {
+    http.Response response =
+    await HttpMethods().postMethod(ApiPostUrl.addFavorite, {
+      "userId": AppSharedPreferences.getUserId(),
+      "carId": carId.toString(),
+    });
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if ((response.body ?? "").isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColorManager.white,
+            content: AppTextWidget(
+              text:"added to favorites successfully",
+              color: AppColorManager.green,
+              fontSize: FontSizeManager.fs16,
+              fontWeight: FontWeight.w600,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+        );
+
+
+        setState(() {});
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColorManager.white,
+          content: AppTextWidget(
+            text: jsonDecode(response.body).toString(),
+            color: AppColorManager.red,
+            fontSize: FontSizeManager.fs16,
+            fontWeight: FontWeight.w600,
+            overflow: TextOverflow.visible,
+          ),
+        ),
+      );
+    }
+  }
   @override
   void initState() {
     getCar();
@@ -256,6 +296,9 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                  ],
                ),
                     InkWell(
+                      onTap: () {
+                        addToFavorite(entity?.car?.id ?? "");
+                      },
                       child: Row(
                         children: [
                           const Icon(

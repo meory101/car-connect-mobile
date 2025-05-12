@@ -113,6 +113,22 @@ class _UserBoardState extends State<UserBoard> {
                             icon: AppIconManager.car),
                       ),
                     ],
+                  ),
+              SizedBox(
+                  height: AppHeightManager.h2,
+                ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SettingsItem(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(RouteNamedScreens.myFavorites);
+                            },
+                            title: "My Favorites",
+                            icon: AppIconManager.car),
+                      ),
+                    ],
                   )
                 ],
               ),
