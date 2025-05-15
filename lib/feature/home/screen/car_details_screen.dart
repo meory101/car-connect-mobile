@@ -6,6 +6,7 @@ import 'package:car_connect/core/resource/size_manager.dart';
 import 'package:car_connect/core/storage/shared/shared_pref.dart';
 import 'package:car_connect/core/widget/app_bar/main_app_bar.dart';
 import 'package:car_connect/core/widget/button/main_app_button.dart';
+import 'package:car_connect/core/widget/form_field/title_app_form_filed.dart';
 import 'package:car_connect/core/widget/image/main_image_widget.dart';
 import 'package:car_connect/core/widget/loading/app_circular_progress_widget.dart';
 import 'package:car_connect/feature/home/model/car_details_response_entity.dart';
@@ -108,7 +109,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     }
   }
 
-  void addLike(carId,action) async {
+  void addLike(carId, action) async {
     http.Response response =
         await HttpMethods().postMethod(ApiPostUrl.addLike, {
       "userId": AppSharedPreferences.getUserId(),
@@ -136,10 +137,53 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     }
   }
 
+String? content;
+  reportContent()async{
+    http.Response response =
+    await HttpMethods().postMethod(ApiPostUrl.addReport, {
+      "userId": AppSharedPreferences.getUserId(),
+      "carId":widget.args.id.toString(),
+      "content" : content ??""
+    });
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if ((response.body ?? "").isNotEmpty) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColorManager.white,
+            content: AppTextWidget(
+              text: "reported successfully",
+              color: AppColorManager.green,
+              fontSize: FontSizeManager.fs16,
+              fontWeight: FontWeight.w600,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+        );
+
+        setState(() {});
+      }
+    } else {
+      Navigator.of(context).pop();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColorManager.white,
+          content: AppTextWidget(
+            text: jsonDecode(response.body).toString(),
+            color: AppColorManager.red,
+            fontSize: FontSizeManager.fs16,
+            fontWeight: FontWeight.w600,
+            overflow: TextOverflow.visible,
+          ),
+        ),
+      );
+    }
+  }
 
   void addToFavorite(carId) async {
     http.Response response =
-    await HttpMethods().postMethod(ApiPostUrl.addFavorite, {
+        await HttpMethods().postMethod(ApiPostUrl.addFavorite, {
       "userId": AppSharedPreferences.getUserId(),
       "carId": carId.toString(),
     });
@@ -149,7 +193,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
           SnackBar(
             backgroundColor: AppColorManager.white,
             content: AppTextWidget(
-              text:"added to favorites successfully",
+              text: "added to favorites successfully",
               color: AppColorManager.green,
               fontSize: FontSizeManager.fs16,
               fontWeight: FontWeight.w600,
@@ -157,7 +201,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
             ),
           ),
         );
-
 
         setState(() {});
       }
@@ -176,6 +219,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
       );
     }
   }
+
   @override
   void initState() {
     getCar();
@@ -205,6 +249,132 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                 maxLines: 2,
               ),
             ),
+          ),
+          SizedBox(
+            width: AppWidthManager.w1Point8,
+          ),
+          IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(AppRadiusManager.r20)),
+                      ),
+                      insetPadding: EdgeInsets.symmetric(
+                        horizontal: AppWidthManager.w4,
+                      ),
+                      elevation: 0,
+                      backgroundColor: AppColorManager.white,
+                      child: StatefulBuilder(builder: (context, setState) {
+                        return SizedBox(
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: EdgeInsets.all(AppWidthManager.w3Point8),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: AppHeightManager.h2point5,
+                                  ),
+                                  AppTextWidget(
+                                    text: "report",
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: FontSizeManager.fs18,
+                                    overflow: TextOverflow.visible,
+                                    color: AppColorManager.black,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(
+                                    height: AppHeightManager.h1,
+                                  ),
+                                  AppTextWidget(
+                                    text: "Report Content",
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: FontSizeManager.fs15,
+                                    color: AppColorManager.grey,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(
+                                    height: AppHeightManager.h1point8,
+                                  ),
+                                  TitleAppFormFiled(
+                                      hint: "report content",
+                                      title: "report content",
+                                      onChanged: (value) {
+                                        content  =value;
+
+                                        return null;
+                                      },
+                                      validator: (value) {
+                                        return null;
+
+                                      },),
+                                  SizedBox(
+                                    height: AppHeightManager.h1point8,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: MainAppButton(
+                                          color: AppColorManager.red,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: AppWidthManager.w10),
+                                          borderRadius: BorderRadius.circular(
+                                              AppRadiusManager.r15),
+                                          height: AppHeightManager.h6,
+                                          onTap: () {
+                                            reportContent();
+                                          },
+                                          alignment: Alignment.center,
+                                          child: AppTextWidget(
+                                            text: "done",
+                                            fontSize: FontSizeManager.fs16,
+                                            color: AppColorManager.white,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: MainAppButton(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: AppWidthManager.w10),
+                                          borderRadius: BorderRadius.circular(
+                                              AppRadiusManager.r15),
+                                          height: AppHeightManager.h6,
+                                          onTap: () {},
+                                          alignment: Alignment.center,
+                                          child: AppTextWidget(
+                                            text: "cancel",
+                                            fontSize: FontSizeManager.fs16,
+                                            color: AppColorManager.black,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: AppWidthManager.w1Point2,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: AppHeightManager.h1point8,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    );
+                  },
+                );
+              },
+              icon: Icon(Icons.report, color: AppColorManager.red)),
+          SizedBox(
+            width: AppWidthManager.w1Point8,
           ),
         ],
         title: "Car Details",
@@ -248,53 +418,53 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-               Row(
-                 children: [
-                   Row(
-                     children: [
-                       const Icon(
-                         Icons.remove_red_eye,
-                         color: AppColorManager.white,
-                       ),
-                       SizedBox(
-                         width: AppWidthManager.w1Point8,
-                       ),
-                       AppTextWidget(
-                         text: "${entity?.views}",
-                         fontSize: FontSizeManager.fs16,
-                         fontWeight: FontWeight.w400,
-                         color: AppColorManager.textGrey,
-                         overflow: TextOverflow.ellipsis,
-                         maxLines: 2,
-                       ),
-                     ],
-                   ),
-                   Row(
-                     children: [
-                       IconButton(
-                         onPressed: () {
-                           addLike(entity?.car?.id ?? "","add");
-                         },
-                         icon: const Icon(
-                           Icons.thumb_up_alt_rounded,
-                           color: AppColorManager.white,
-                         ),
-                       ),
-                       SizedBox(
-                         width: AppWidthManager.w1Point2,
-                       ),
-                       AppTextWidget(
-                         text: "${entity?.likes}",
-                         fontSize: FontSizeManager.fs16,
-                         fontWeight: FontWeight.w400,
-                         color: AppColorManager.textGrey,
-                         overflow: TextOverflow.ellipsis,
-                         maxLines: 2,
-                       ),
-                     ],
-                   ),
-                 ],
-               ),
+                    Row(
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.remove_red_eye,
+                              color: AppColorManager.white,
+                            ),
+                            SizedBox(
+                              width: AppWidthManager.w1Point8,
+                            ),
+                            AppTextWidget(
+                              text: "${entity?.views}",
+                              fontSize: FontSizeManager.fs16,
+                              fontWeight: FontWeight.w400,
+                              color: AppColorManager.textGrey,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                addLike(entity?.car?.id ?? "", "add");
+                              },
+                              icon: const Icon(
+                                Icons.thumb_up_alt_rounded,
+                                color: AppColorManager.white,
+                              ),
+                            ),
+                            SizedBox(
+                              width: AppWidthManager.w1Point2,
+                            ),
+                            AppTextWidget(
+                              text: "${entity?.likes}",
+                              fontSize: FontSizeManager.fs16,
+                              fontWeight: FontWeight.w400,
+                              color: AppColorManager.textGrey,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                     InkWell(
                       onTap: () {
                         addToFavorite(entity?.car?.id ?? "");
@@ -319,8 +489,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                         ],
                       ),
                     ),
-
-
                   ],
                 ),
                 SizedBox(

@@ -17,6 +17,7 @@ class ApiPostUrl {
   static String rateCar = '${_baseUrl}rateCar';
   static String addLike = '${_baseUrl}addLike';
   static String addComment = '${_baseUrl}addComment';
+  static String   addReport = '${_baseUrl}addReport';
   static String getUserFavorites = '${_baseUrl}getUserFavorites';
   static String addCar = '${_baseUrl}addCar';
   static String getOrderByUserId = '${_baseUrl}getOrderByUserId';
