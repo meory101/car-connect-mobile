@@ -10,6 +10,7 @@ import 'package:car_connect/core/widget/form_field/title_app_form_filed.dart';
 import 'package:car_connect/core/widget/image/main_image_widget.dart';
 import 'package:car_connect/core/widget/loading/app_circular_progress_widget.dart';
 import 'package:car_connect/feature/home/model/car_details_response_entity.dart';
+import 'package:car_connect/feature/home/screen/cart_screen.dart';
 import 'package:car_connect/feature/home/widget/expansion_card.dart';
 import 'package:car_connect/router/router.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,47 +34,6 @@ class CarDetailsScreen extends StatefulWidget {
 class _CarDetailsScreenState extends State<CarDetailsScreen> {
   int status = -1;
   CarDetailsResponseEntity? entity;
-  int selectedType = 0;
-
-  makeOrder({
-    required String paymentType,
-    required String carId,
-    required String date,
-    required String lat,
-    required String long,
-  }) async {
-    http.Response response =
-        await HttpMethods().postMethod(ApiPostUrl.addOrder, {
-      "paymentType": paymentType,
-      "carId": carId,
-      "userId": AppSharedPreferences.getUserId(),
-      "date": DateTime.now().toString(),
-      "lat": lat,
-      "long": long
-    });
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      if ((response.body ?? "").isNotEmpty) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          RouteNamedScreens.main,
-          (route) => false,
-        );
-        setState(() {});
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppColorManager.white,
-          content: AppTextWidget(
-            text: utf8.decode(response.bodyBytes),
-            color: AppColorManager.navy,
-            fontSize: FontSizeManager.fs16,
-            fontWeight: FontWeight.w600,
-            overflow: TextOverflow.visible,
-          ),
-        ),
-      );
-    }
-  }
 
   void getCar() async {
     setState(() {
@@ -137,13 +97,14 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     }
   }
 
-String? content;
-  reportContent()async{
+  String? content;
+
+  reportContent() async {
     http.Response response =
-    await HttpMethods().postMethod(ApiPostUrl.addReport, {
+        await HttpMethods().postMethod(ApiPostUrl.addReport, {
       "userId": AppSharedPreferences.getUserId(),
-      "carId":widget.args.id.toString(),
-      "content" : content ??""
+      "carId": widget.args.id.toString(),
+      "content": content ?? ""
     });
     if (response.statusCode == 200 || response.statusCode == 201) {
       if ((response.body ?? "").isNotEmpty) {
@@ -303,17 +264,17 @@ String? content;
                                     height: AppHeightManager.h1point8,
                                   ),
                                   TitleAppFormFiled(
-                                      hint: "report content",
-                                      title: "report content",
-                                      onChanged: (value) {
-                                        content  =value;
+                                    hint: "report content",
+                                    title: "report content",
+                                    onChanged: (value) {
+                                      content = value;
 
-                                        return null;
-                                      },
-                                      validator: (value) {
-                                        return null;
-
-                                      },),
+                                      return null;
+                                    },
+                                    validator: (value) {
+                                      return null;
+                                    },
+                                  ),
                                   SizedBox(
                                     height: AppHeightManager.h1point8,
                                   ),
@@ -685,105 +646,20 @@ String? content;
                 SizedBox(
                   height: AppHeightManager.h3,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: MainAppButton(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: AppWidthManager.w10),
-                        borderRadius:
-                            BorderRadius.circular(AppRadiusManager.r10),
-                        height: AppHeightManager.h7point5,
-                        onTap: () {
-                          setState(() {
-                            selectedType = 0;
-                          });
-                        },
-                        color: selectedType == 0
-                            ? AppColorManager.navy
-                            : AppColorManager.white,
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            AppTextWidget(
-                              text: "Pay Later",
-                              fontSize: FontSizeManager.fs15,
-                              color: selectedType == 1
-                                  ? AppColorManager.navy
-                                  : AppColorManager.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: AppWidthManager.w1Point2,
-                    ),
-                    Expanded(
-                      child: MainAppButton(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: AppWidthManager.w10),
-                        borderRadius:
-                            BorderRadius.circular(AppRadiusManager.r10),
-                        height: AppHeightManager.h7point5,
-                        onTap: () {
-                          setState(() {
-                            selectedType = 1;
-                          });
-                        },
-                        color: selectedType == 1
-                            ? AppColorManager.navy
-                            : AppColorManager.white,
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            AppTextWidget(
-                              text: "Using Card",
-                              fontSize: FontSizeManager.fs15,
-                              color: selectedType == 0
-                                  ? AppColorManager.navy
-                                  : AppColorManager.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: AppHeightManager.h3,
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: AppHeightManager.h3),
-                  width: AppWidthManager.w100,
-                  height: AppHeightManager.h7,
+                MainAppButton(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(RouteNamedScreens.cart,
+                        arguments: CartArgs(
+                            carId: (entity!.car)));
+                  },
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: AppColorManager.background,
-                      borderRadius: BorderRadius.circular(AppRadiusManager.r15),
-                      border: Border.all(color: AppColorManager.white)),
-                  child: MainAppButton(
-                    onTap: () {
-                      makeOrder(
-                          paymentType: selectedType.toString(),
-                          carId: (entity?.car?.id).toString(),
-                          date: "",
-                          lat: "0",
-                          long: "0");
-                    },
-                    color: AppColorManager.background,
-                    child: AppTextWidget(
-                      text: "Buy Now",
-                      fontSize: FontSizeManager.fs16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColorManager.white,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
+                  width: AppWidthManager.w100,
+                  height: AppHeightManager.h6,
+                  color: AppColorManager.navy,
+                  child: AppTextWidget(
+                    text: "Add To Cart",
+                    color: Colors.white,
+                    fontSize: FontSizeManager.fs16,
                   ),
                 )
               ],

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import '../core/navigation/fade_builder_route.dart';
 import '../feature/auth/screen/login_screen.dart';
 import '../feature/board/screen/favorites_screen.dart';
+import '../feature/home/screen/cart_screen.dart';
 
 
 
@@ -32,6 +33,7 @@ abstract class RouteNamedScreens {
   static const String myCars = "/myCars";
   static const String carOrders = "/car-orders";
   static const String myFavorites = "/my-favorites";
+  static const String cart = "/my-cart";
 }
 
 abstract class AppRouter {
@@ -50,6 +52,12 @@ abstract class AppRouter {
         return FadeBuilderRoute(
           page: FavoritesScreen(),
         );
+      case RouteNamedScreens.cart:
+        argument as CartArgs;
+        return FadeBuilderRoute(
+          page: CartScreen(args: argument,),
+        );
+
       case RouteNamedScreens.login:
         return FadeBuilderRoute(
           page: const LoginScreen(),
