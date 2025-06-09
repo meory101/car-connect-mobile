@@ -27,6 +27,7 @@ class TitleAppFormFiled extends StatelessWidget {
 
         this.controller,
       this.titleColor,
+        this.onTap,
       this.multiLines});
 
   final String title, hint;
@@ -43,6 +44,7 @@ class TitleAppFormFiled extends StatelessWidget {
   final double? paddingValue;
   final Color? titleColor;
   final FocusNode? focusNode;
+  final void Function()? onTap;
   final TextInputType?  inputType;
   final TextEditingController? controller;
     final bool? obscureText;
@@ -62,6 +64,7 @@ class TitleAppFormFiled extends StatelessWidget {
         ),
         SizedBox(
           child: AppTextFormField(
+            onTap: onTap,
             obscureText: obscureText ,
             controller: controller,
             focusNode: focusNode ,

@@ -7,10 +7,8 @@ import 'package:car_connect/core/widget/app_bar/main_app_bar.dart';
 import 'package:car_connect/core/widget/drop_down/NameAndId.dart';
 import 'package:car_connect/core/widget/drop_down/title_drop_down_form_field.dart';
 import 'package:car_connect/core/widget/form_field/title_app_form_filed.dart';
-import 'package:car_connect/core/widget/image/main_image_widget.dart';
-import 'package:car_connect/feature/auth/screen/personal_info.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/api/api_links.dart';
@@ -21,7 +19,6 @@ import '../../../core/resource/font_manager.dart';
 import '../../../core/widget/button/main_app_button.dart';
 import '../../../core/widget/button/main_app_dotted_button.dart';
 import '../../../core/widget/text/app_text_widget.dart';
-import 'package:http/http.dart' as http;
 
 class AddCarScreen extends StatefulWidget {
   const AddCarScreen({super.key});
@@ -100,6 +97,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
       "killo": kilo.toString(),
       "price": price.toString(),
       "desc": desc.toString(),
+      "rent": selectedType.toString()
     };
 
     http.Response response = await HttpMethods()
@@ -144,12 +142,10 @@ class _AddCarScreenState extends State<AddCarScreen> {
       if ((response.body ?? "").isNotEmpty) {
         brands = jsonDecode(response.body);
         if (brands.isNotEmpty) {
-          brands.forEach(
-            (element) {
-              brandsOptions.add(NameAndId(
-                  name: element['name'], id: element['id'].toString()));
-            },
-          );
+          for (var element in brands) {
+            brandsOptions.add(
+                NameAndId(name: element['name'], id: element['id'].toString()));
+          }
           setState(() {});
         }
       } else {
@@ -176,12 +172,10 @@ class _AddCarScreenState extends State<AddCarScreen> {
       if ((response.body ?? "").isNotEmpty) {
         gears = jsonDecode(response.body);
         if (gears.isNotEmpty) {
-          gears.forEach(
-            (element) {
-              gearsOptions.add(NameAndId(
-                  name: element['name'], id: element['id'].toString()));
-            },
-          );
+          for (var element in gears) {
+            gearsOptions.add(
+                NameAndId(name: element['name'], id: element['id'].toString()));
+          }
           setState(() {});
         }
       } else {
@@ -208,12 +202,10 @@ class _AddCarScreenState extends State<AddCarScreen> {
       if ((response.body ?? "").isNotEmpty) {
         color = jsonDecode(response.body);
         if (color.isNotEmpty) {
-          color.forEach(
-            (element) {
-              colorOptions.add(NameAndId(
-                  name: element['name'], id: element['id'].toString()));
-            },
-          );
+          for (var element in color) {
+            colorOptions.add(
+                NameAndId(name: element['name'], id: element['id'].toString()));
+          }
           setState(() {});
         }
       } else {
@@ -241,12 +233,10 @@ class _AddCarScreenState extends State<AddCarScreen> {
         model = jsonDecode(response.body);
         model = jsonDecode(response.body);
         if (model.isNotEmpty) {
-          model.forEach(
-            (element) {
-              modelOptions.add(NameAndId(
-                  name: element['name'], id: element['id'].toString()));
-            },
-          );
+          for (var element in model) {
+            modelOptions.add(
+                NameAndId(name: element['name'], id: element['id'].toString()));
+          }
           setState(() {});
         }
       } else {
@@ -275,10 +265,11 @@ class _AddCarScreenState extends State<AddCarScreen> {
     super.initState();
   }
 
+  int selectedType = 1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(title: "add car"),
+      appBar: const MainAppBar(title: "add car"),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(AppWidthManager.w3Point8),
@@ -415,6 +406,56 @@ class _AddCarScreenState extends State<AddCarScreen> {
                   fontSize: FontSizeManager.fs15,
                   maxLines: 2,
                 ),
+              ),
+              SizedBox(
+                height: AppHeightManager.h1point8,
+              ),
+              AppTextWidget(
+                text: "Car Type",
+                fontSize: FontSizeManager.fs16,
+                fontWeight: FontWeight.w500,
+                color: AppColorManager.white,
+              ),
+              SizedBox(
+                height: AppHeightManager.h1,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<int>(
+                      title: AppTextWidget(
+                        text: "For Rent",
+                        fontSize: FontSizeManager.fs16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColorManager.white,
+                      ),
+                      value: 1,
+                      groupValue: selectedType,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedType = value ?? 1;
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile<int>(
+                      title: AppTextWidget(
+                        text: "For Sale",
+                        fontSize: FontSizeManager.fs16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColorManager.white,
+                      ),
+                      value: 0,
+                      groupValue: selectedType,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedType = value ?? 0;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
                 height: AppHeightManager.h1point8,

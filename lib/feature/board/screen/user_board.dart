@@ -8,6 +8,7 @@ import '../../../core/resource/font_manager.dart';
 import '../../../core/resource/image_manager.dart';
 import '../../../core/resource/size_manager.dart';
 import '../../../core/storage/shared/shared_pref.dart';
+import '../../../core/widget/button/main_app_button.dart';
 import '../../../core/widget/image/main_image_widget.dart';
 import '../../../core/widget/text/app_text_widget.dart';
 import '../../../router/router.dart';
@@ -125,11 +126,24 @@ class _UserBoardState extends State<UserBoard> {
                               Navigator.of(context)
                                   .pushNamed(RouteNamedScreens.myFavorites);
                             },
-                            title: "My Favorites",
+                            title: "addvorites",
                             icon: AppIconManager.car),
                       ),
                     ],
-                  )
+                  ),
+                  SizedBox(height: AppHeightManager.h2),
+                  SettingsItem(
+                    icon: AppIconManager.car,
+                    onTap: () {
+                      Navigator.of(context).pushNamed(RouteNamedScreens.reservations);
+                    },
+                    // alignment: Alignment.center,
+                    // width: AppWidthManager.w100,
+                    // height: AppHeightManager.h6,
+                    // color: AppColorManager.navy,
+                    title: "My Reservations",
+
+                  ),
                 ],
               ),
             ),

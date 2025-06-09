@@ -110,6 +110,8 @@ class _PersonalInfoState extends State<PersonalInfo> {
         names);
     if (response.statusCode == 200 || response.statusCode == 201) {
       AppSharedPreferences.cashUserId(userId: UserAuthType.id ?? "");
+      print( UserAuthType.id);
+      print(AppSharedPreferences.getUserId());
       AppSharedPreferences.cashAuthType(authType: UserAuthType.type ?? "");
       AppSharedPreferences.cashUserNameEn(userName: name ?? "");
       AppSharedPreferences.cashCommercialRegister(register: commercialRegister?.path??"");

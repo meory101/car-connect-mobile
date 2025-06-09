@@ -6,6 +6,7 @@ import 'package:car_connect/feature/board/screen/cutomer_orders.dart';
 import 'package:car_connect/feature/board/screen/my_cars_screen.dart';
 import 'package:car_connect/feature/home/screen/car_details_screen.dart';
 import 'package:car_connect/feature/home/screen/home_screen.dart';
+import 'package:car_connect/feature/home/screen/rent_car_screen.dart';
 import 'package:car_connect/feature/main/screen/main_bottom_app_bar.dart';
 import 'package:car_connect/feature/profile/presentation/profile_screen.dart';
 import 'package:car_connect/feature/splash/splash_screen.dart';
@@ -13,10 +14,10 @@ import 'package:flutter/material.dart';
 
 import '../core/navigation/fade_builder_route.dart';
 import '../feature/auth/screen/login_screen.dart';
+import '../feature/board/screen/business_reservations_screen.dart';
 import '../feature/board/screen/favorites_screen.dart';
+import '../feature/board/screen/reservations_screen.dart';
 import '../feature/home/screen/cart_screen.dart';
-
-
 
 abstract class RouteNamedScreens {
   static String init = splash;
@@ -34,6 +35,9 @@ abstract class RouteNamedScreens {
   static const String carOrders = "/car-orders";
   static const String myFavorites = "/my-favorites";
   static const String cart = "/my-cart";
+  static const String rentCar = "/rent";
+  static const String reservations = '/reservations';
+  static const String businessReservations = '/business-reservations';
 }
 
 abstract class AppRouter {
@@ -50,12 +54,22 @@ abstract class AppRouter {
 
       case RouteNamedScreens.myFavorites:
         return FadeBuilderRoute(
-          page: FavoritesScreen(),
+          page: const FavoritesScreen(),
+        );
+
+      case RouteNamedScreens.rentCar:
+        argument as CartArgs;
+        return FadeBuilderRoute(
+          page: RentCarScreen(
+            args: argument,
+          ),
         );
       case RouteNamedScreens.cart:
         argument as CartArgs;
         return FadeBuilderRoute(
-          page: CartScreen(args: argument,),
+          page: CartScreen(
+            args: argument,
+          ),
         );
 
       case RouteNamedScreens.login:
@@ -65,48 +79,42 @@ abstract class AppRouter {
       case RouteNamedScreens.verification:
         argument as VerificationArgs;
         return FadeBuilderRoute(
-          page:  VerificationCodeScreen(
+          page: VerificationCodeScreen(
             args: argument,
           ),
         );
 
       case RouteNamedScreens.addCar:
         return FadeBuilderRoute(
-          page:  AddCarScreen(
-          ),
+          page: const AddCarScreen(),
         );
 
       case RouteNamedScreens.myOrders:
         return FadeBuilderRoute(
-          page:  CustomerOrdersScreen(
-          ),
+          page: const CustomerOrdersScreen(),
         );
       case RouteNamedScreens.myCars:
         return FadeBuilderRoute(
-          page:  MyCarsScreen(
-          ),
+          page: const MyCarsScreen(),
         );
       case RouteNamedScreens.carDetails:
         argument as CarDetailsArgs;
         return FadeBuilderRoute(
-          page:  CarDetailsScreen(
+          page: CarDetailsScreen(
             args: argument,
           ),
         );
       case RouteNamedScreens.main:
         return FadeBuilderRoute(
-          page:  const MainAppBottomAppBar(
-          ),
+          page: const MainAppBottomAppBar(),
         );
       case RouteNamedScreens.profile:
         return FadeBuilderRoute(
-          page:  const ProfileScreen(
-          ),
+          page: const ProfileScreen(),
         );
       case RouteNamedScreens.carOrders:
         return FadeBuilderRoute(
-          page:  const CarOrdersScreen(
-          ),
+          page: const CarOrdersScreen(),
         );
       case RouteNamedScreens.home:
         return FadeBuilderRoute(
@@ -115,6 +123,14 @@ abstract class AppRouter {
       case RouteNamedScreens.personalInfo:
         return FadeBuilderRoute(
           page: const PersonalInfo(),
+        );
+      case RouteNamedScreens.reservations:
+        return MaterialPageRoute(
+          builder: (context) => const ReservationsScreen(),
+        );
+      case RouteNamedScreens.businessReservations:
+        return MaterialPageRoute(
+          builder: (context) => const BusinessReservationsScreen(),
         );
     }
     return FadeBuilderRoute(page: const SplashScreen());

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'comments.dart';
+
 /// car : {"id":4,"desc":"sssssssssssssssssssssss","price":"222","available":1,"killo":"33","ownerShipImageUrl":"Af17HtkdfJgznhieFK0oXYarpFFRLTQSlgWFOrYR.jpg","colorId":1,"gearId":1,"brandId":1,"modelId":1,"userId":4,"created_at":"2025-04-13T11:29:53.000000Z","updated_at":"2025-04-13T11:29:53.000000Z"}
 /// gear : {"id":1,"name":"rrrrrr","created_at":null,"updated_at":null}
 /// model : {"id":1,"name":"model","created_at":"2025-04-10T12:44:00.000000Z","updated_at":"2025-04-10T12:44:00.000000Z"}
@@ -8,24 +9,29 @@ import 'comments.dart';
 /// brand : {"id":1,"name":"BMW","created_at":"2025-04-10T11:53:50.000000Z","updated_at":"2025-04-10T11:53:50.000000Z"}
 /// images : [{"id":1,"imageUrl":"L9idfJOW0K2oChBwRKxmLCGijnJzYXZ9iOH4hJDd.jpg","carId":4,"created_at":"2025-04-13T11:29:53.000000Z","updated_at":"2025-04-13T11:29:53.000000Z"}]
 
-CarDetailsResponseEntity carDetailsResponseEntityFromJson(String str) => CarDetailsResponseEntity.fromJson(json.decode(str));
-String carDetailsResponseEntityToJson(CarDetailsResponseEntity data) => json.encode(data.toJson());
+CarDetailsResponseEntity carDetailsResponseEntityFromJson(String str) =>
+    CarDetailsResponseEntity.fromJson(json.decode(str));
+String carDetailsResponseEntityToJson(CarDetailsResponseEntity data) =>
+    json.encode(data.toJson());
+
 class CarDetailsResponseEntity {
   CarDetailsResponseEntity({
-      Car? car, 
-      Gear? gear, 
-      Model? model, 
-      Color? color, 
-      Brand? brand,
-      String? rate,
-      String? views,
-      String? likes,
-
+    Car? car,
+    Gear? gear,
+    Model? model,
+    Color? color,
+    Brand? brand,
+    String? rate,
+    String? views,
+    String? likes,
+    num? rent,
     List<Comments>? comments,
-      List<Images>? images,}){
+    List<Images>? images,
+  }) {
     _car = car;
+    _rent = rent;
     _likes = likes;
-    _comments =comments;
+    _comments = comments;
     _gear = gear;
     _model = model;
     _color = color;
@@ -33,16 +39,18 @@ class CarDetailsResponseEntity {
     _views = views;
     _brand = brand;
     _images = images;
-}
+  }
 
   CarDetailsResponseEntity.fromJson(dynamic json) {
     _comments = json['comments'] == null
         ? []
-        : List<Comments>.from(json['comments'].map((x) => Comments.fromJson(x)));
+        : List<Comments>.from(
+            json['comments'].map((x) => Comments.fromJson(x)));
     _car = json['car'] != null ? Car.fromJson(json['car']) : null;
     _rate = json['rate']?.toString();
     _views = json['views'].toString();
     _likes = json['likes'].toString();
+    _rent = json['rent'];
     _gear = json['gear'] != null ? Gear.fromJson(json['gear']) : null;
     _model = json['model'] != null ? Model.fromJson(json['model']) : null;
     _color = json['color'] != null ? Color.fromJson(json['color']) : null;
@@ -61,30 +69,34 @@ class CarDetailsResponseEntity {
   String? _rate;
   String? _views;
   String? _likes;
+  num? _rent;
   Brand? _brand;
   List<Comments>? _comments;
   List<Images>? _images;
-CarDetailsResponseEntity copyWith({  Car? car,
-  Gear? gear,
-  Model? model,
-  List<Comments>? comments,
-  Color? color,
-  Brand? brand,
-  List<Images>? images,
-  String? rate,
-  String? likes,
-  String? views
-}) => CarDetailsResponseEntity(  car: car ?? _car,
-  gear: gear ?? _gear,
-  comments: comments ?? _comments,
-  model: model ?? _model,
-  color: color ?? _color,
-  brand: brand ?? _brand,
-  images: images ?? _images,
-  likes: likes ?? _likes,
-  views: views?? _views,
-  rate:rate?? _rate
-);
+  CarDetailsResponseEntity copyWith(
+          {Car? car,
+          Gear? gear,
+          Model? model,
+          List<Comments>? comments,
+          Color? color,
+          Brand? brand,
+          List<Images>? images,
+          String? rate,
+          String? likes,
+          num? rent,
+          String? views}) =>
+      CarDetailsResponseEntity(
+          car: car ?? _car,
+          gear: gear ?? _gear,
+          rent: rent ?? _rent,
+          comments: comments ?? _comments,
+          model: model ?? _model,
+          color: color ?? _color,
+          brand: brand ?? _brand,
+          images: images ?? _images,
+          likes: likes ?? _likes,
+          views: views ?? _views,
+          rate: rate ?? _rate);
   Car? get car => _car;
   String? get rate => _rate;
   String? get views => _views;
@@ -92,6 +104,7 @@ CarDetailsResponseEntity copyWith({  Car? car,
   Gear? get gear => _gear;
   Model? get model => _model;
   Color? get color => _color;
+  num? get rent => _rent;
   Brand? get brand => _brand;
   List<Comments>? get comments => _comments;
   List<Images>? get images => _images;
@@ -118,7 +131,6 @@ CarDetailsResponseEntity copyWith({  Car? car,
     }
     return map;
   }
-
 }
 
 /// id : 1
@@ -129,19 +141,21 @@ CarDetailsResponseEntity copyWith({  Car? car,
 
 Images imagesFromJson(String str) => Images.fromJson(json.decode(str));
 String imagesToJson(Images data) => json.encode(data.toJson());
+
 class Images {
   Images({
-      num? id, 
-      String? imageUrl, 
-      num? carId, 
-      String? createdAt, 
-      String? updatedAt,}){
+    num? id,
+    String? imageUrl,
+    num? carId,
+    String? createdAt,
+    String? updatedAt,
+  }) {
     _id = id;
     _imageUrl = imageUrl;
     _carId = carId;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
-}
+  }
 
   Images.fromJson(dynamic json) {
     _id = json['id'];
@@ -155,17 +169,20 @@ class Images {
   num? _carId;
   String? _createdAt;
   String? _updatedAt;
-Images copyWith({  num? id,
-  String? imageUrl,
-  num? carId,
-  String? createdAt,
-  String? updatedAt,
-}) => Images(  id: id ?? _id,
-  imageUrl: imageUrl ?? _imageUrl,
-  carId: carId ?? _carId,
-  createdAt: createdAt ?? _createdAt,
-  updatedAt: updatedAt ?? _updatedAt,
-);
+  Images copyWith({
+    num? id,
+    String? imageUrl,
+    num? carId,
+    String? createdAt,
+    String? updatedAt,
+  }) =>
+      Images(
+        id: id ?? _id,
+        imageUrl: imageUrl ?? _imageUrl,
+        carId: carId ?? _carId,
+        createdAt: createdAt ?? _createdAt,
+        updatedAt: updatedAt ?? _updatedAt,
+      );
   num? get id => _id;
   String? get imageUrl => _imageUrl;
   num? get carId => _carId;
@@ -181,7 +198,6 @@ Images copyWith({  num? id,
     map['updated_at'] = _updatedAt;
     return map;
   }
-
 }
 
 /// id : 1
@@ -191,17 +207,19 @@ Images copyWith({  num? id,
 
 Brand brandFromJson(String str) => Brand.fromJson(json.decode(str));
 String brandToJson(Brand data) => json.encode(data.toJson());
+
 class Brand {
   Brand({
-      num? id, 
-      String? name, 
-      String? createdAt, 
-      String? updatedAt,}){
+    num? id,
+    String? name,
+    String? createdAt,
+    String? updatedAt,
+  }) {
     _id = id;
     _name = name;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
-}
+  }
 
   Brand.fromJson(dynamic json) {
     _id = json['id'];
@@ -213,15 +231,18 @@ class Brand {
   String? _name;
   String? _createdAt;
   String? _updatedAt;
-Brand copyWith({  num? id,
-  String? name,
-  String? createdAt,
-  String? updatedAt,
-}) => Brand(  id: id ?? _id,
-  name: name ?? _name,
-  createdAt: createdAt ?? _createdAt,
-  updatedAt: updatedAt ?? _updatedAt,
-);
+  Brand copyWith({
+    num? id,
+    String? name,
+    String? createdAt,
+    String? updatedAt,
+  }) =>
+      Brand(
+        id: id ?? _id,
+        name: name ?? _name,
+        createdAt: createdAt ?? _createdAt,
+        updatedAt: updatedAt ?? _updatedAt,
+      );
   num? get id => _id;
   String? get name => _name;
   String? get createdAt => _createdAt;
@@ -235,7 +256,6 @@ Brand copyWith({  num? id,
     map['updated_at'] = _updatedAt;
     return map;
   }
-
 }
 
 /// id : 1
@@ -245,17 +265,19 @@ Brand copyWith({  num? id,
 
 Color colorFromJson(String str) => Color.fromJson(json.decode(str));
 String colorToJson(Color data) => json.encode(data.toJson());
+
 class Color {
   Color({
-      num? id, 
-      String? name, 
-      dynamic createdAt, 
-      dynamic updatedAt,}){
+    num? id,
+    String? name,
+    dynamic createdAt,
+    dynamic updatedAt,
+  }) {
     _id = id;
     _name = name;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
-}
+  }
 
   Color.fromJson(dynamic json) {
     _id = json['id'];
@@ -267,15 +289,18 @@ class Color {
   String? _name;
   dynamic _createdAt;
   dynamic _updatedAt;
-Color copyWith({  num? id,
-  String? name,
-  dynamic createdAt,
-  dynamic updatedAt,
-}) => Color(  id: id ?? _id,
-  name: name ?? _name,
-  createdAt: createdAt ?? _createdAt,
-  updatedAt: updatedAt ?? _updatedAt,
-);
+  Color copyWith({
+    num? id,
+    String? name,
+    dynamic createdAt,
+    dynamic updatedAt,
+  }) =>
+      Color(
+        id: id ?? _id,
+        name: name ?? _name,
+        createdAt: createdAt ?? _createdAt,
+        updatedAt: updatedAt ?? _updatedAt,
+      );
   num? get id => _id;
   String? get name => _name;
   dynamic get createdAt => _createdAt;
@@ -289,7 +314,6 @@ Color copyWith({  num? id,
     map['updated_at'] = _updatedAt;
     return map;
   }
-
 }
 
 /// id : 1
@@ -299,17 +323,19 @@ Color copyWith({  num? id,
 
 Model modelFromJson(String str) => Model.fromJson(json.decode(str));
 String modelToJson(Model data) => json.encode(data.toJson());
+
 class Model {
   Model({
-      num? id, 
-      String? name, 
-      String? createdAt, 
-      String? updatedAt,}){
+    num? id,
+    String? name,
+    String? createdAt,
+    String? updatedAt,
+  }) {
     _id = id;
     _name = name;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
-}
+  }
 
   Model.fromJson(dynamic json) {
     _id = json['id'];
@@ -321,15 +347,18 @@ class Model {
   String? _name;
   String? _createdAt;
   String? _updatedAt;
-Model copyWith({  num? id,
-  String? name,
-  String? createdAt,
-  String? updatedAt,
-}) => Model(  id: id ?? _id,
-  name: name ?? _name,
-  createdAt: createdAt ?? _createdAt,
-  updatedAt: updatedAt ?? _updatedAt,
-);
+  Model copyWith({
+    num? id,
+    String? name,
+    String? createdAt,
+    String? updatedAt,
+  }) =>
+      Model(
+        id: id ?? _id,
+        name: name ?? _name,
+        createdAt: createdAt ?? _createdAt,
+        updatedAt: updatedAt ?? _updatedAt,
+      );
   num? get id => _id;
   String? get name => _name;
   String? get createdAt => _createdAt;
@@ -343,7 +372,6 @@ Model copyWith({  num? id,
     map['updated_at'] = _updatedAt;
     return map;
   }
-
 }
 
 /// id : 1
@@ -353,17 +381,19 @@ Model copyWith({  num? id,
 
 Gear gearFromJson(String str) => Gear.fromJson(json.decode(str));
 String gearToJson(Gear data) => json.encode(data.toJson());
+
 class Gear {
   Gear({
-      num? id, 
-      String? name, 
-      dynamic createdAt, 
-      dynamic updatedAt,}){
+    num? id,
+    String? name,
+    dynamic createdAt,
+    dynamic updatedAt,
+  }) {
     _id = id;
     _name = name;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
-}
+  }
 
   Gear.fromJson(dynamic json) {
     _id = json['id'];
@@ -375,15 +405,18 @@ class Gear {
   String? _name;
   dynamic _createdAt;
   dynamic _updatedAt;
-Gear copyWith({  num? id,
-  String? name,
-  dynamic createdAt,
-  dynamic updatedAt,
-}) => Gear(  id: id ?? _id,
-  name: name ?? _name,
-  createdAt: createdAt ?? _createdAt,
-  updatedAt: updatedAt ?? _updatedAt,
-);
+  Gear copyWith({
+    num? id,
+    String? name,
+    dynamic createdAt,
+    dynamic updatedAt,
+  }) =>
+      Gear(
+        id: id ?? _id,
+        name: name ?? _name,
+        createdAt: createdAt ?? _createdAt,
+        updatedAt: updatedAt ?? _updatedAt,
+      );
   num? get id => _id;
   String? get name => _name;
   dynamic get createdAt => _createdAt;
@@ -397,7 +430,6 @@ Gear copyWith({  num? id,
     map['updated_at'] = _updatedAt;
     return map;
   }
-
 }
 
 /// id : 4
@@ -416,22 +448,26 @@ Gear copyWith({  num? id,
 
 Car carFromJson(String str) => Car.fromJson(json.decode(str));
 String carToJson(Car data) => json.encode(data.toJson());
+
 class Car {
   Car({
-      num? id, 
-      String? desc, 
-      String? price, 
-      num? available, 
-      String? killo, 
-      String? ownerShipImageUrl, 
-      num? colorId, 
-      num? gearId, 
-      num? brandId, 
-      num? modelId, 
-      num? userId, 
-      String? createdAt, 
-      String? updatedAt,}){
+    num? id,
+    String? desc,
+    String? price,
+    num? available,
+    String? killo,
+    String? ownerShipImageUrl,
+    num? colorId,
+    num? gearId,
+    num? brandId,
+    num? modelId,
+    num? userId,
+    num? rent,
+    String? createdAt,
+    String? updatedAt,
+  }) {
     _id = id;
+    _rent = rent;
     _desc = desc;
     _price = price;
     _available = available;
@@ -444,11 +480,12 @@ class Car {
     _userId = userId;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
-}
+  }
 
   Car.fromJson(dynamic json) {
     _id = json['id'];
     _desc = json['desc'];
+    _rent = json['rent'];
     _price = json['price'];
     _available = json['available'];
     _killo = json['killo'];
@@ -462,6 +499,7 @@ class Car {
     _updatedAt = json['updated_at'];
   }
   num? _id;
+  num? _rent;
   String? _desc;
   String? _price;
   num? _available;
@@ -474,33 +512,38 @@ class Car {
   num? _userId;
   String? _createdAt;
   String? _updatedAt;
-Car copyWith({  num? id,
-  String? desc,
-  String? price,
-  num? available,
-  String? killo,
-  String? ownerShipImageUrl,
-  num? colorId,
-  num? gearId,
-  num? brandId,
-  num? modelId,
-  num? userId,
-  String? createdAt,
-  String? updatedAt,
-}) => Car(  id: id ?? _id,
-  desc: desc ?? _desc,
-  price: price ?? _price,
-  available: available ?? _available,
-  killo: killo ?? _killo,
-  ownerShipImageUrl: ownerShipImageUrl ?? _ownerShipImageUrl,
-  colorId: colorId ?? _colorId,
-  gearId: gearId ?? _gearId,
-  brandId: brandId ?? _brandId,
-  modelId: modelId ?? _modelId,
-  userId: userId ?? _userId,
-  createdAt: createdAt ?? _createdAt,
-  updatedAt: updatedAt ?? _updatedAt,
-);
+  Car copyWith({
+    num? id,
+    String? desc,
+    String? price,
+    num? available,
+    num? rent,
+    String? killo,
+    String? ownerShipImageUrl,
+    num? colorId,
+    num? gearId,
+    num? brandId,
+    num? modelId,
+    num? userId,
+    String? createdAt,
+    String? updatedAt,
+  }) =>
+      Car(
+        id: id ?? _id,
+        desc: desc ?? _desc,
+        rent: rent ?? _rent,
+        price: price ?? _price,
+        available: available ?? _available,
+        killo: killo ?? _killo,
+        ownerShipImageUrl: ownerShipImageUrl ?? _ownerShipImageUrl,
+        colorId: colorId ?? _colorId,
+        gearId: gearId ?? _gearId,
+        brandId: brandId ?? _brandId,
+        modelId: modelId ?? _modelId,
+        userId: userId ?? _userId,
+        createdAt: createdAt ?? _createdAt,
+        updatedAt: updatedAt ?? _updatedAt,
+      );
   num? get id => _id;
   String? get desc => _desc;
   String? get price => _price;
@@ -510,6 +553,7 @@ Car copyWith({  num? id,
   num? get colorId => _colorId;
   num? get gearId => _gearId;
   num? get brandId => _brandId;
+  num? get rent => _rent;
   num? get modelId => _modelId;
   num? get userId => _userId;
   String? get createdAt => _createdAt;
@@ -521,6 +565,7 @@ Car copyWith({  num? id,
     map['desc'] = _desc;
     map['price'] = _price;
     map['available'] = _available;
+    map['rent'] = _rent;
     map['killo'] = _killo;
     map['ownerShipImageUrl'] = _ownerShipImageUrl;
     map['colorId'] = _colorId;
@@ -532,5 +577,4 @@ Car copyWith({  num? id,
     map['updated_at'] = _updatedAt;
     return map;
   }
-
 }

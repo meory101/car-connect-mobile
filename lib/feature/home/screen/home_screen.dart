@@ -463,7 +463,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     visible: newCarsStatus == 1,
                     replacement: const SizedBox(),
                     child: SizedBox(
-                      height: AppHeightManager.h39,
+                      height: AppHeightManager.h35,
                       child: newCars.isEmpty
                           ? Text("")
                           : ListView.builder(

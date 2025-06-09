@@ -648,6 +648,13 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                 ),
                 MainAppButton(
                   onTap: () {
+                    if(entity?.car?.rent.toString() =="1"){
+
+
+                      Navigator.of(context).pushNamed(RouteNamedScreens.rentCar,arguments: CartArgs(
+                          carId: (entity!.car)));
+                      return;
+                    }
                     Navigator.of(context).pushNamed(RouteNamedScreens.cart,
                         arguments: CartArgs(
                             carId: (entity!.car)));
@@ -657,7 +664,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                   height: AppHeightManager.h6,
                   color: AppColorManager.navy,
                   child: AppTextWidget(
-                    text: "Add To Cart",
+                    text:entity?.car?.rent.toString() =="1" ? "Rent this Car" : "Add To Cart",
                     color: Colors.white,
                     fontSize: FontSizeManager.fs16,
                   ),

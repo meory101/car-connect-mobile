@@ -1,5 +1,4 @@
 import 'package:car_connect/core/resource/size_manager.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/resource/color_manager.dart';
@@ -93,7 +92,8 @@ class _CompanyBoradState extends State<CompanyBorad> {
                         onTap: () {
                           Navigator.of(context)
                               .pushNamed(RouteNamedScreens.myCars);
-                        },                        title: "My Car",
+                        },
+                        title: "My Car",
                         icon: AppIconManager.car),
                   )
                 ],
@@ -114,20 +114,54 @@ class _CompanyBoradState extends State<CompanyBorad> {
                   ),
                 ],
               ),
-          SizedBox(
-            height: AppHeightManager.h2,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: SettingsItem(
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(RouteNamedScreens.myFavorites);
-                    },
-                    title: "My Favorites",
-                    icon: AppIconManager.car),
-              ),])
+              SizedBox(
+                height: AppHeightManager.h2,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: SettingsItem(
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushNamed(RouteNamedScreens.myFavorites);
+                        },
+                        title: "My Favorites",
+                        icon: AppIconManager.car),
+                  ),
+                ],
+              ),
+              // SizedBox(
+              //   height: AppHeightManager.h2,
+              // ),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: SettingsItem(
+              //           onTap: () {
+              //             Navigator.of(context)
+              //                 .pushNamed(RouteNamedScreens.businessReservations);
+              //           },
+              //           title: "Car Reservations",
+              //           icon: AppIconManager.car),
+              //     ),
+              //   ],
+              // ),
+              SizedBox(
+                height: AppHeightManager.h2,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: SettingsItem(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                              RouteNamedScreens.businessReservations);
+                        },
+                        title: "My Business Reservations",
+                        icon: AppIconManager.car),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

@@ -5,12 +5,13 @@ import 'package:car_connect/core/resource/font_manager.dart';
 import 'package:car_connect/core/resource/size_manager.dart';
 import 'package:car_connect/core/widget/button/main_app_button.dart';
 import 'package:car_connect/core/widget/text/app_text_widget.dart';
+import 'package:intl/intl.dart';
 
 void showWheelDatePicker(
     {required BuildContext context,
-        DateTime? initialDateTime,
-        DateTime? minimumDate,
-        DateTime? maximumDate,
+      DateTime? initialDateTime,
+      DateTime? minimumDate,
+      DateTime? maximumDate,
       required Function(DateTime) onDateSelected}) {
   DateTime selectedDate = DateTime.now();
   showModalBottomSheet(
@@ -37,7 +38,7 @@ void showWheelDatePicker(
                 padding: EdgeInsets.symmetric(horizontal: AppWidthManager.w5),
                 child: CupertinoDatePicker(
 
-                  initialDateTime:maximumDate?? DateTime.now(),
+                  initialDateTime:initialDateTime?? DateTime.now(),
                   onDateTimeChanged: (DateTime? pickedDate) {
                     if (pickedDate != null) {
                       selectedDate = pickedDate;
@@ -62,11 +63,11 @@ void showWheelDatePicker(
                   borderRadius: BorderRadius.circular(AppRadiusManager.r10),
                   height: AppHeightManager.h5,
                   onTap: () {
-                    // String formattedDate = DateFormat('yyyy-MM-dd', 'en_US')
-                    //     .format(selectedDate);
-                    // DateTime finalDate =
-                    // DateTime.parse(formattedDate);
-                    onDateSelected(selectedDate);
+                    String formattedDate = DateFormat('yyyy-MM-dd', 'en_US')
+                        .format(selectedDate);
+                    DateTime finalDate =
+                    DateTime.parse(formattedDate);
+                    onDateSelected(finalDate);
                     Navigator.of(context).pop();
 
                   },
